@@ -10,7 +10,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "tempkey123";
+    private static final String SECRET_KEY = "tempkey12345678901234567891234567890123456789";
     private static final long EXPIRATION = 1000 * 60 * 60;
 
     public String createToken(String email) {
