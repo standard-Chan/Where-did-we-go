@@ -2,9 +2,11 @@ package com.wheredidwego.controller;
 
 import com.wheredidwego.entity.User;
 import com.wheredidwego.repository.UserRepository;
+import com.wheredidwego.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -21,6 +23,8 @@ import java.util.Map;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, String> request) {
@@ -41,28 +45,22 @@ public class AuthController {
         String email = request.get("email");
         String password = request.get("password");
 
-        try {
-            User user = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
-            return ResponseEntity.ok().body(user.getNickname());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        // AuthenticationManager에 인증 요청
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(email, password);
 
-//        // AuthenticationManager에게 인증 요청
-//        UsernamePasswordAuthenticationToken authToken =
-//                new UsernamePasswordAuthenticationToken(username, password);
-//
-//        try {
-//            // 여기서 → CustomAuthenticationProvider의 authenticate()가 실행됨
-//            Authentication authentication = authenticationManager.authenticate(authToken);
-//
-//            // 인증 성공하면 JWT 발급
-//            String token = jwtUtil.createToken(username);
-//            return ResponseEntity.ok().body(Map.of("token", token));
-//
-//        } catch (AuthenticationException e) {
-//            return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
-//        }
+        try {
+            // 여기서 → CustomAuthenticationProvider의 authenticate()가 실행됨
+            Authentication authentication = authenticationManager.authenticate(authToken);
+
+            String authenticatedEmail = authentication.getName();
+            // 인증 성공하면 JWT 발급
+            String token = jwtUtil.createToken(authenticatedEmail);
+            return ResponseEntity.ok().body(Map.of("token", token));
+
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
+        }
     }
 
 }
