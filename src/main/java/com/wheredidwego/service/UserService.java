@@ -1,5 +1,6 @@
 package com.wheredidwego.service;
 
+import com.wheredidwego.config.dto.UserResponseDto;
 import com.wheredidwego.entity.User;
 import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.util.UserValidator;
@@ -28,7 +29,22 @@ public class UserService {
 
     public User findUserByEmail(String email) {
         return userRepository.findUserByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자 이메일입니다."));
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findUserById(id)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자 ID 입니다."));
+    }
+
+    public UserResponseDto getUserResponseDto(Long userId) {
+        User user = findUserById(userId);
+
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .build();
     }
 
 }
