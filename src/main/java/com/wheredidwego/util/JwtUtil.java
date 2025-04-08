@@ -3,6 +3,7 @@ package com.wheredidwego.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -10,8 +11,11 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "tempkey12345678901234567891234567890123456789";
-    private static final long EXPIRATION = 1000 * 60 * 60;
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
+    @Value("${jwt.expiration}")
+    private long EXPIRATION;
 
     public String createToken(String email) {
         return Jwts.builder()
