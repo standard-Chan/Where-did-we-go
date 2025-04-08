@@ -2,6 +2,7 @@ package com.wheredidwego.service;
 
 import com.wheredidwego.entity.User;
 import com.wheredidwego.repository.UserRepository;
+import com.wheredidwego.util.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void signup(String email, String password, String nickname) {
+
+        UserValidator.validateSignupInput(email, password);
+
         if (userRepository.existsUserByEmail(email)) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
