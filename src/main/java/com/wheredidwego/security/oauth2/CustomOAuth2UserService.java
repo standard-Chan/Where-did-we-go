@@ -25,11 +25,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             String email = oAuth2User.getAttribute("email");
             String nickname = oAuth2User.getAttribute("name");
 
-            // DB에 사용자 없으면 새로 저장
+            // DB에 사용자 정보 가져오기. 없으면 저장
             User user = userRepository.findUserByEmail(email)
                     .orElseGet(() -> userRepository.save(new User(email, null, nickname)));
 
-            // User → OAuth2User 래핑해서 반환
             return new CustomOAuth2User(user);
         }
         else {

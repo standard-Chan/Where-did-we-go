@@ -1,5 +1,6 @@
-package com.wheredidwego.service;
+package com.wheredidwego.security.oauth2;
 
+import com.wheredidwego.domain.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,7 +26,7 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // 필요하면 ROLE_USER 등 추가
+        return List.of();
     }
 
     @Override
