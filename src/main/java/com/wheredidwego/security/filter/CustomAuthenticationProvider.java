@@ -1,6 +1,6 @@
-package com.wheredidwego.config.filter;
+package com.wheredidwego.security.filter;
 
-import com.wheredidwego.entity.User;
+import com.wheredidwego.domain.User;
 import com.wheredidwego.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;

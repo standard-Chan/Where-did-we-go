@@ -1,8 +1,8 @@
 package com.wheredidwego.config;
 
-import com.wheredidwego.config.filter.JwtAuthenticationFilter;
+import com.wheredidwego.security.filter.JwtAuthenticationFilter;
 import com.wheredidwego.repository.UserRepository;
-import com.wheredidwego.config.filter.CustomAuthenticationProvider;
+import com.wheredidwego.security.filter.CustomAuthenticationProvider;
 import com.wheredidwego.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.wheredidwego.config.dto;
+package com.wheredidwego.dto;
 
 import lombok.Builder;
 import lombok.Getter;
