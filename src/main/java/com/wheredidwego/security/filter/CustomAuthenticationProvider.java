@@ -26,7 +26,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("잘못된 이메일입니다."));
 
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+        if (rawPassword==null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
             throw new BadCredentialsException("잘못된 비밀번호입니다.");
         }
 
