@@ -42,9 +42,10 @@ bin/
 .DS_Store
 
 # ect
-.idea
-gradle
-.gradle
+.idea/
+gradle/
+.gradle/
+out/
 gradlew.bat
 gradlew
 settings.gradle.kts
