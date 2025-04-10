@@ -42,8 +42,11 @@ bin/
 .DS_Store
 
 # ect
-.idea
-gradle
+.idea/
+gradle/
+.gradle/
+out/
 gradlew.bat
 gradlew
 settings.gradle.kts
+src/main/resources/application.yml

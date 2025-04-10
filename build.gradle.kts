@@ -37,6 +37,17 @@ dependencies {
 
     // Spring Security
     implementation("org.springframework.boot:spring-boot-starter-security")
+
+    // OAuth2
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+
+    // jwt
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+    //tymeleaf
+    implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
 }
 
 tasks.test {
