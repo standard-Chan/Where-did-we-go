@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>OAuth2 로그인 테스트</title>
+</head>
+<body>
+<h1>로그인 페이지</h1>
+
+<!-- 일반 로그인 (선택) -->
+<form method="post" action="/auth/login">
+    <label>Email:</label>
+    <input type="text" name="email"><br>
+    <label>Password:</label>
+    <input type="password" name="password"><br>
+    <button type="submit">로그인</button>
+</form>
+
+<hr>
+
+<!-- 구글 로그인 -->
+<a href="/login/oauth2/authorization/google">
+    <button>Google 로그인</button>
+</a>
+
+</body>
+</html>

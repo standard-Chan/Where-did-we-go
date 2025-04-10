@@ -3,6 +3,8 @@ package com.wheredidwego.config;
 import com.wheredidwego.security.filter.JwtAuthenticationFilter;
 import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.security.filter.CustomAuthenticationProvider;
+import com.wheredidwego.security.oauth2.CustomOAuth2UserService;
+import com.wheredidwego.security.oauth2.OAuth2SuccessHandler;
 import com.wheredidwego.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +26,8 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -49,12 +53,19 @@ public class SecurityConfig {
                 .csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/auth/**", "/login/**", "/oauth2/**").permitAll()
                         .anyRequest().permitAll()
                 )
-                .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtUtil),
-                        UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .successHandler(oAuth2SuccessHandler)
+                )
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+
     }
 }
