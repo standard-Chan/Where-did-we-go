@@ -44,6 +44,7 @@ bin/
 # ect
 .idea
 gradle
+.gradle
 gradlew.bat
 gradlew
 settings.gradle.kts

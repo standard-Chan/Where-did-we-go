@@ -41,7 +41,6 @@ public class AuthController {
         String email = request.get("email");
         String password = request.get("password");
 
-
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(email, password);
 

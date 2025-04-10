@@ -21,9 +21,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        // jwt 생성
         String token = jwtUtil.createToken(oAuth2User.getUser().getEmail());
 
-        // 프론트로 리다이렉트하면서 토큰 전달 (예시 URL)
-        response.sendRedirect("http://localhost:3000/oauth-success?token=" + token);
+        // 프론트로 리다이렉트하면서 파라미터로 jwt 전달
+        response.sendRedirect("http://localhost:8080/success?token=" + token);
     }
 }

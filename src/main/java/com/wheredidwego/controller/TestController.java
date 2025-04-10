@@ -13,4 +13,9 @@ public class TestController {
     public String test() {
         return "login";
     }
+
+    @GetMapping("/success")
+    public String sucsees() {
+        return "success";
+    }
 }
