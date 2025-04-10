@@ -15,7 +15,7 @@ public class TestController {
     }
 
     @GetMapping("/success")
-    public String sucsees() {
+    public String succsess() {
         return "success";
     }
 }
