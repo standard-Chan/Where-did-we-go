@@ -4,10 +4,12 @@ import com.wheredidwego.dto.UserResponseDto;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.util.UserValidator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class UserService {
