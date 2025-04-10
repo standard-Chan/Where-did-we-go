@@ -1,8 +1,7 @@
 
 import com.wheredidwego.MyApplication;
-import com.wheredidwego.entity.User;
+import com.wheredidwego.domain.User;
 import com.wheredidwego.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

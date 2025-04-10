@@ -1,7 +1,7 @@
 package com.wheredidwego.service;
 
-import com.wheredidwego.config.dto.UserResponseDto;
-import com.wheredidwego.entity.User;
+import com.wheredidwego.dto.UserResponseDto;
+import com.wheredidwego.domain.User;
 import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.util.UserValidator;
 import lombok.RequiredArgsConstructor;

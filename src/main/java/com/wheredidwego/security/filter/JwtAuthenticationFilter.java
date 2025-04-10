@@ -1,4 +1,4 @@
-package com.wheredidwego.config.filter;
+package com.wheredidwego.security.filter;
 
 import com.wheredidwego.util.JwtUtil;
 import jakarta.servlet.FilterChain;

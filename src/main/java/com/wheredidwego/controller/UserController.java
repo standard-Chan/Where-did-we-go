@@ -1,6 +1,6 @@
 package com.wheredidwego.controller;
 
-import com.wheredidwego.config.dto.UserResponseDto;
+import com.wheredidwego.dto.UserResponseDto;
 import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

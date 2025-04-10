@@ -1,19 +1,14 @@
 package com.wheredidwego.controller;
 
-import com.wheredidwego.config.dto.UserResponseDto;
-import com.wheredidwego.entity.User;
-import com.wheredidwego.repository.UserRepository;
+import com.wheredidwego.domain.User;
 import com.wheredidwego.service.UserService;
 import com.wheredidwego.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -45,7 +40,6 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String password = request.get("password");
-
 
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(email, password);
