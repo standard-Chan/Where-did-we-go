@@ -17,7 +17,6 @@ public class UserController {
 
     @GetMapping("/users/me")
     public UserResponseDto getCurrentUser(@AuthenticationPrincipal String email) {
-        System.out.println("@@@@@@@@@@@@@@@ " + email);
         return userService.getUserResponseDto(userService.findUserByEmail(email).getId());
     }
 }

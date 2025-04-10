@@ -15,7 +15,11 @@ public class RegionService {
 
     public Region createRegion(Double lat, Double lng) {
         Region region = new Region(lat, lng);
-
         return regionRepository.save(region);
+    }
+
+    public Region findRegionById(Long id) {
+        return regionRepository.findRegionById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Region id입니다."));
     }
 }
