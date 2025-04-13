@@ -19,7 +19,7 @@ public class RegionTest {
     @BeforeEach
     public void set() {
         x=127.1086228;
-        y=37.4012191;
+        y=30.4012191;
 
     }
 

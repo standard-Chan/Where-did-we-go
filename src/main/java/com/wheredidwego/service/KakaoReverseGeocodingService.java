@@ -25,10 +25,12 @@ public class KakaoReverseGeocodingService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public RegionInfoDto getRegionFromCoords(double lat, double lng) {
+        if (lat < 33 || lat > 39 || 124 > lng || lng > 132) {
+            throw new GeocodingException("[ERROR]한국을 벗어나는 좌표: " + lng + "," + lat);
+        }
         // url 설정
         String url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json"
                 + "?x=" + lng + "&y=" + lat;
-        System.out.println(url);
 
         // header 설정
         HttpHeaders headers = new HttpHeaders();
@@ -51,14 +53,14 @@ public class KakaoReverseGeocodingService {
 
                 return new RegionInfoDto(province, district);
             } else {
-                throw new GeocodingException("좌표에 해당하는 지역 정보를 찾을 수 없습니다.");
+                throw new GeocodingException("[ERROR]좌표에 해당하는 지역 정보를 찾을 수 없습니다.");
             }
         } catch (HttpClientErrorException e) {
-            throw new GeocodingException("카카오 API 요청 오류: " + e.getMessage());
+            throw new GeocodingException("[ERROR]카카오 API 요청 오류: " + e.getMessage());
         } catch (JSONException e) {
-            throw new GeocodingException("응답 데이터 파싱 오류: " + e.getMessage());
+            throw new GeocodingException("[ERROR]응답 데이터 파싱 오류: " + e.getMessage());
         } catch (Exception e) {
-            throw new GeocodingException("역지오코딩 처리 중 알 수 없는 오류가 발생했습니다.");
+            throw new GeocodingException("[ERROR]역지오코딩 처리 중 알 수 없는 오류가 발생했습니다.");
         }
     }
 
