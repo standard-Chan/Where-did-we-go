@@ -44,7 +44,7 @@ public class RegionService {
         try {
             regionInfo = reverseGeocodingService.getRegionFromCoords(lat, lng);
         } catch (GeocodingException e) {
-            regionInfo = new RegionInfoDto("UNKNOWN", "UNKNOWN");
+            regionInfo = new RegionInfoDto("UNKNOWN", "UNKNOWN", "UNKNOWN");
         }
         return regionInfo;
     }

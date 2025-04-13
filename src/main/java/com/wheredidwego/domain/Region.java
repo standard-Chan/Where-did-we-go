@@ -23,6 +23,7 @@ public class Region {
 
     private String province; // 자치도
     private String district; // 행정 구역 구
+    private String subdistrict; //  읍면동
 
     @Column(nullable = false)
     private Long referenceCount; // 참조 횟수
@@ -32,6 +33,7 @@ public class Region {
         this.lng = lng;
         this.province = regionInfo.getProvince();
         this.district = regionInfo.getDistrict();
+        this.subdistrict = regionInfo.getSubdistrict();
         this.referenceCount = 1L;
     }
 

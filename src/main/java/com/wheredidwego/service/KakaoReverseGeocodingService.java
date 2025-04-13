@@ -49,9 +49,10 @@ public class KakaoReverseGeocodingService {
                 // get : 법정동 data
                 JSONObject region = documents.getJSONObject(0);
                 String province = region.getString("region_1depth_name"); // 도
-                String district = region.getString("region_2depth_name"); // 읍,면,동
+                String district = region.getString("region_2depth_name"); // 시, 구
+                String subdistrict = region.getString("region_3depth_name"); // 읍면동
 
-                return new RegionInfoDto(province, district);
+                return new RegionInfoDto(province, district, subdistrict);
             } else {
                 throw new GeocodingException("[ERROR]좌표에 해당하는 지역 정보를 찾을 수 없습니다.");
             }
