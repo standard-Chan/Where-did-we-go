@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface RegionRepository extends JpaRepository<Region, Long> {
 
     Optional<Region> findRegionById(Long id);
+    Optional<Region> findRegionByLatAndLng(double latitude, double longitude);
+    boolean existsRegionByLatAndLng(double latitude, double longitude);
 }

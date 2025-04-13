@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -17,15 +19,19 @@ public class RegionService {
     private final KakaoReverseGeocodingService reverseGeocodingService;
 
     public Region createRegion(Double lat, Double lng) {
-        RegionInfoDto regionInfo;
-        try {
-            regionInfo = reverseGeocodingService.getRegionFromCoords(lat, lng);
-        } catch (GeocodingException e) {
-            regionInfo = new RegionInfoDto("UNKNOWN", "UNKNOWN");
+        Optional<Region> optionalRegion = regionRepository.findRegionByLatAndLng(lat, lng);
+
+        // 중복된 Region
+        if (optionalRegion.isPresent()) {
+            Region region = optionalRegion.get();
+            region.increaseReferenceCount();
+            return region;
         }
 
-        Region region = new Region(lat, lng, regionInfo);
-        return regionRepository.save(region);
+        // 새로운 Region
+        RegionInfoDto regionInfo = searchRegion(lat, lng);
+        Region newRegion = new Region(lat, lng, regionInfo);
+        return regionRepository.save(newRegion);
     }
 
     public Region findRegionById(Long id) {
@@ -33,4 +39,13 @@ public class RegionService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Region id입니다."));
     }
 
+    public RegionInfoDto searchRegion(Double lat, Double lng) {
+        RegionInfoDto regionInfo;
+        try {
+            regionInfo = reverseGeocodingService.getRegionFromCoords(lat, lng);
+        } catch (GeocodingException e) {
+            regionInfo = new RegionInfoDto("UNKNOWN", "UNKNOWN");
+        }
+        return regionInfo;
+    }
 }

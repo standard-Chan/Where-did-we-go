@@ -1,6 +1,7 @@
 package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.Region;
+import com.wheredidwego.dto.RegionInfoDto;
 import com.wheredidwego.dto.UserResponseDto;
 import com.wheredidwego.repository.RegionRepository;
 import com.wheredidwego.service.RegionService;
@@ -18,12 +19,12 @@ public class RegionController {
 
     private final RegionService regionService;
 
-    @GetMapping("/region")
+    @GetMapping("/regions")
     public Region getRegionById(@RequestParam("id") Long id) {
         return regionService.findRegionById(id);
     }
 
-    @PostMapping("/region")
+    @PostMapping("/regions")
     public ResponseEntity<?> createRegion(@RequestBody Map<String, String> request) {
         String latStr = request.get("lat");
         String lngStr = request.get("lng");
@@ -36,5 +37,11 @@ public class RegionController {
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body("잘못된 형식의 좌표를 입력하였습니다.");
         }
+    }
+
+    @GetMapping("/regions/geo")
+    public ResponseEntity<?> searchRegion(@RequestParam("lat") double lat, @RequestParam("lng") double lng) {
+        RegionInfoDto regionInfo = regionService.searchRegion(lat, lng);
+        return ResponseEntity.ok().body(regionInfo);
     }
 }

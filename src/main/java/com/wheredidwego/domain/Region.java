@@ -1,10 +1,7 @@
 package com.wheredidwego.domain;
 
 import com.wheredidwego.dto.RegionInfoDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,23 +16,27 @@ public class Region {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Double lat;  // 위도
+    @Column(nullable = false)
     private Double lng;  // 경도
 
     private String province; // 자치도
-    private String district; // 행정구역 구
+    private String district; // 행정 구역 구
 
-
-    public Region(Double lat, Double lng) {
-        this.lat = lat;
-        this.lng = lng;
-    }
+    @Column(nullable = false)
+    private Long referenceCount; // 참조 횟수
 
     public Region(Double lat, Double lng, RegionInfoDto regionInfo) {
         this.lat = lat;
         this.lng = lng;
         this.province = regionInfo.getProvince();
         this.district = regionInfo.getDistrict();
+        this.referenceCount = 1L;
+    }
+
+    public void increaseReferenceCount() {
+        this.referenceCount++;
     }
 
 }
