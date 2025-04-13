@@ -17,6 +17,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2") // ✅ JUnit 5 명확하게 지정
     testRuntimeOnly("org.junit.platform:junit-platform-launcher") // ✅ 런처 추가
 
+    //h2 console
+    runtimeOnly ("com.h2database:h2")
+
     // lombok
     compileOnly ("org.projectlombok:lombok:1.18.36")
     annotationProcessor ("org.projectlombok:lombok:1.18.36")

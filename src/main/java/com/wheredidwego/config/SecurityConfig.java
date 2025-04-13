@@ -7,6 +7,7 @@ import com.wheredidwego.security.oauth2.CustomOAuth2UserService;
 import com.wheredidwego.security.oauth2.OAuth2SuccessHandler;
 import com.wheredidwego.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,9 +53,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(crsf -> crsf.disable())
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable()) // iframe 허용 (H2 콘솔)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/auth/**", "/login/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/auth/**", "/login/**", "/oauth2/**", "/h2-console/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

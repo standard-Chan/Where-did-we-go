@@ -32,6 +32,5 @@ public class AuthTest {
 
         User user2 = userRepository.findUserByNickname("jeong").get();
         assertEquals(user2.getEmail(), "abc@naver.com");
-
     }
 }
