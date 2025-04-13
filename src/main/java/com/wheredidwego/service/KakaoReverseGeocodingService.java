@@ -28,6 +28,7 @@ public class KakaoReverseGeocodingService {
         // url 설정
         String url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json"
                 + "?x=" + lng + "&y=" + lat;
+        System.out.println(url);
 
         // header 설정
         HttpHeaders headers = new HttpHeaders();
@@ -50,7 +51,7 @@ public class KakaoReverseGeocodingService {
 
                 return new RegionInfoDto(province, district);
             } else {
-                throw new RuntimeException("좌표에 해당하는 지역 정보를 찾을 수 없습니다.");
+                throw new GeocodingException("좌표에 해당하는 지역 정보를 찾을 수 없습니다.");
             }
         } catch (HttpClientErrorException e) {
             throw new GeocodingException("카카오 API 요청 오류: " + e.getMessage());

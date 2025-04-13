@@ -1,5 +1,6 @@
 package com.wheredidwego.domain;
 
+import com.wheredidwego.dto.RegionInfoDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,4 +30,12 @@ public class Region {
         this.lat = lat;
         this.lng = lng;
     }
+
+    public Region(Double lat, Double lng, RegionInfoDto regionInfo) {
+        this.lat = lat;
+        this.lng = lng;
+        this.province = regionInfo.getProvince();
+        this.district = regionInfo.getDistrict();
+    }
+
 }
