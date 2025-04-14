@@ -18,17 +18,17 @@ public class RegionService {
     private final RegionRepository regionRepository;
     private final KakaoReverseGeocodingService reverseGeocodingService;
 
-    public Region createRegion(Double lat, Double lng) {
+    public Region findOrCreateRegion(Double lat, Double lng) {
         Optional<Region> optionalRegion = regionRepository.findRegionByLatAndLng(lat, lng);
 
-        // 중복된 Region
+        // 중복된 Region -> 기존 Region 반환
         if (optionalRegion.isPresent()) {
             Region region = optionalRegion.get();
             region.increaseReferenceCount();
             return region;
         }
 
-        // 새로운 Region
+        // 새로운 Region 생성
         RegionInfoDto regionInfo = searchRegion(lat, lng);
         Region newRegion = new Region(lat, lng, regionInfo);
         return regionRepository.save(newRegion);
