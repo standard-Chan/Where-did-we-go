@@ -19,8 +19,13 @@ public class RegionController {
     private final RegionService regionService;
 
     @GetMapping("/regions")
-    public Region getRegionById(@RequestParam("id") Long id) {
-        return regionService.findRegionById(id);
+    public ResponseEntity<?> getRegionById(@RequestParam("id") Long id) {
+        try {
+            Region region = regionService.findRegionById(id);
+            return ResponseEntity.ok().body(region);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/regions")
@@ -43,7 +48,11 @@ public class RegionController {
 
     @GetMapping("/regions/geo")
     public ResponseEntity<?> searchRegion(@RequestParam("lat") double lat, @RequestParam("lng") double lng) {
-        RegionInfoDto regionInfo = regionService.searchRegion(lat, lng);
-        return ResponseEntity.ok().body(regionInfo);
+        try {
+            RegionInfoDto regionInfo = regionService.searchRegion(lat, lng);
+            return ResponseEntity.ok().body(regionInfo);
+        } catch (GeocodingException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

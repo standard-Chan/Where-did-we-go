@@ -35,7 +35,7 @@ public class RegionService {
 
     public Region findRegionById(Long id) {
         return regionRepository.findRegionById(id)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR]: 존재하지 않는 Region id입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Region id입니다."));
     }
 
     public RegionInfoDto searchRegion(Double lat, Double lng) {
@@ -43,7 +43,7 @@ public class RegionService {
         try {
             regionInfo = reverseGeocodingService.getRegionFromCoords(lat, lng);
         } catch (GeocodingException e) {
-            throw new GeocodingException("[ERROR]: "+ e.getMessage() + "(" + lat + "," + lng + ")");
+            throw new GeocodingException("e.getMessage()" + "(" + lat + "," + lng + ")");
         }
         return regionInfo;
     }
