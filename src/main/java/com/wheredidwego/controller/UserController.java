@@ -1,6 +1,7 @@
 package com.wheredidwego.controller;
 
 import com.wheredidwego.dto.UserResponseDto;
+import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +17,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/users/me")
-    public UserResponseDto getCurrentUser(@AuthenticationPrincipal String email) {
-        return userService.getUserResponseDto(userService.findUserByEmail(email).getId());
+    public UserResponseDto getCurrentUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        String email = userDetails.getUsername();
+        return userService.getUserResponseDtoByUserDetails(userDetails);
     }
 }

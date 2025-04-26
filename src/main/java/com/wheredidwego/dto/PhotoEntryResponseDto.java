@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PhotoEntryResponseDto {
-    private String photoUrl;
+    private String photoPath;
     private String description;
     private String takenAt;
     private Double lat;
@@ -21,7 +21,7 @@ public class PhotoEntryResponseDto {
     private String subdistrict;
 
     public PhotoEntryResponseDto(PhotoEntry photoEntry) {
-        this.photoUrl = photoEntry.getPhotoUrl();
+        this.photoPath = photoEntry.getPhotoPath();
         this.description = photoEntry.getDescription();
         this.takenAt = Date.localDateToString(photoEntry.getTakenAt());
         Region region = photoEntry.getRegion();
@@ -30,5 +30,9 @@ public class PhotoEntryResponseDto {
         this.province = region.getProvince();
         this.district = region.getDistrict();
         this.subdistrict = region.getSubdistrict();
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
     }
 }

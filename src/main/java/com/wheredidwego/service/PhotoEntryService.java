@@ -32,7 +32,7 @@ public class PhotoEntryService {
         PhotoEntry entry = PhotoEntry.builder()
                 .user(user)
                 .region(region)
-                .photoUrl(dto.getPhotoUrl())
+                .photoPath(dto.getPhotoPath())
                 .description(dto.getDescription())
                 .takenAt(Date.stringToLocalDate(dto.getTakenAt()))
                 .build();

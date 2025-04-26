@@ -6,6 +6,7 @@ import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.util.UserValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,9 +40,9 @@ public class UserService {
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자 ID 입니다."));
     }
 
-    public UserResponseDto getUserResponseDto(Long userId) {
-        User user = findUserById(userId);
 
+    public UserResponseDto getUserResponseDtoByUserDetails(UserDetails userDetails) {
+        User user = findUserByEmail(userDetails.getUsername());
         return UserResponseDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())

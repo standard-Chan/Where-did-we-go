@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PhotoEntryUploadDto {
-    private String photoUrl;
+    private String photoPath;
     private String description;
     private String takenAt;
     private Double lat;

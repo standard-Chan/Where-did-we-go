@@ -1,21 +1,9 @@
 package com.wheredidwego.service;
 
-import com.wheredidwego.util.aws.S3PresignedUrl;
+import com.wheredidwego.domain.PhotoEntry;
+import com.wheredidwego.util.awsS3.S3PresignedUrl;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
-
-import java.net.URL;
-import java.time.Duration;
-
 
 
 @Service
@@ -23,14 +11,17 @@ import java.time.Duration;
 public class S3PresignedUrlService {
 
     private final S3PresignedUrl s3PresignedUrl;
+    private final PhotoEntryService photoEntryService;
 
     public String getUploadS3PresignedUrl(String userEmail) {
         String path = s3PresignedUrl.createPathKey(userEmail);
         return s3PresignedUrl.generateUploadS3PresignedUrl(path);
     }
 
-    public String getDownloadS3PresignedUrl(String photoEntryId) {
-
+    public String getDownloadS3PresignedUrl(Long id) {
+        PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
+        String photoS3Path = photoEntry.getPhotoPath();
+        return s3PresignedUrl.generateDownloadPresignedUrl(photoS3Path);
     }
 
 }

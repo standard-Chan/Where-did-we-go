@@ -26,7 +26,7 @@ public class PhotoEntry {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    private String photoUrl;
+    private String photoPath;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -37,10 +37,10 @@ public class PhotoEntry {
     private LocalDate takenAt;
 
     @Builder
-    public PhotoEntry(User user, Region region, String photoUrl, String description, LocalDate takenAt) {
+    public PhotoEntry(User user, Region region, String photoPath, String description, LocalDate takenAt) {
         this.user = user;
         this.region = region;
-        this.photoUrl = photoUrl;
+        this.photoPath = photoPath;
         this.description = description;
         this.takenAt = takenAt;
     }

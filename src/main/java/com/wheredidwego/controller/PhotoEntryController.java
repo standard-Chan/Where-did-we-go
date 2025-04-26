@@ -6,6 +6,7 @@ import com.wheredidwego.dto.PhotoEntryResponseDto;
 import com.wheredidwego.dto.PhotoEntryUploadDto;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.PhotoEntryService;
+import com.wheredidwego.service.S3PresignedUrlService;
 import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class PhotoEntryController {
 
     private final PhotoEntryService photoEntryService;
     private final UserService userService;
+    private final S3PresignedUrlService s3PresignedUrlService;
 
     @PostMapping("/photoEntry")
     public ResponseEntity<?> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadDto dto,
@@ -42,7 +44,9 @@ public class PhotoEntryController {
     @GetMapping("/photoEntry")
     public ResponseEntity<?> getPhotoEntryById(@RequestParam("id") Long id) {
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
+
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+        responseDto.setPhotoPath(s3PresignedUrlService.getDownloadS3PresignedUrl(id));
         return ResponseEntity.ok().body(responseDto);
     }
 }
