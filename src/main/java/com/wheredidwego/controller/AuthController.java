@@ -3,7 +3,10 @@ package com.wheredidwego.controller;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.service.UserService;
 import com.wheredidwego.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> request, HttpServletResponse response) {
         String email = request.get("email");
         String password = request.get("password");
 
@@ -50,6 +53,11 @@ public class AuthController {
             // jwt token 발급
             User user = (User) authentication.getPrincipal();
             String token = jwtUtil.createToken(user.getEmail());
+
+            // cookie 생성
+            Cookie cookie = jwtUtil.createCookie(token);
+            response.addCookie(cookie);
+
             return ResponseEntity.ok().body(Map.of("token", token));
 
         } catch (AuthenticationException e) {

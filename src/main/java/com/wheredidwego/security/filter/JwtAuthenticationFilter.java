@@ -6,6 +6,7 @@ import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,15 +29,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String token = null;
         String authHeader = request.getHeader("Authorization");
 
-        // Jwt가 없을 경우
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            // header에서 jwt 가져오기
+            token = authHeader.substring(7);
+        }
+        else if (request.getCookies() != null) { // 쿠키에서 jwt 가져오기
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("access_token")) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        else { // Jwt가 없을 경우
             filterChain.doFilter(request, response);
             return;
         }
-
-        String token = authHeader.substring(7); // "Bearer " 이후 부분
 
         // jwt 유효성 검사
         if (!jwtUtil.validate(token)) {
@@ -44,9 +57,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String email = jwtUtil.extractEmail(token);
-        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
-        CustomUserDetails userDetails = new CustomUserDetails(user);
+        //user detail 객체 생성
+        CustomUserDetails userDetails = createUserDetailsFromJwtToken(token);
 
         // 인증 객체 생성
         UsernamePasswordAuthenticationToken authentication =
@@ -55,6 +67,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
+    }
+
+    protected CustomUserDetails createUserDetailsFromJwtToken(String token) {
+        String email = jwtUtil.extractEmail(token);
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+        return new CustomUserDetails(user);
     }
 }
 

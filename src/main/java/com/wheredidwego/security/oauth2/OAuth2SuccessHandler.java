@@ -1,6 +1,7 @@
 package com.wheredidwego.security.oauth2;
 
 import com.wheredidwego.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         // jwt 생성
         String token = jwtUtil.createToken(oAuth2User.getUser().getEmail());
+
+        // cookie 생성
+        Cookie cookie = jwtUtil.createCookie(token);
+        response.addCookie(cookie);
 
         // 프론트로 리다이렉트하면서 파라미터로 jwt 전달
         response.sendRedirect("http://localhost:8080/success?token=" + token);

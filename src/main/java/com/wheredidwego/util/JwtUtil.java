@@ -3,6 +3,7 @@ package com.wheredidwego.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,5 +45,15 @@ public class JwtUtil {
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Cookie createCookie(String jwtToken) {
+        Cookie cookie = new Cookie("access_token", jwtToken);
+        cookie.setHttpOnly(true); // JS 조작 불가(XSS 방지)
+        // cookie.setSecure(true);   // HTTPS일 때 전송
+        cookie.setPath("/");      // 전체 경로에 대해 쿠키 유효
+        cookie.setMaxAge(60 * 60); // 1시간 동안 유지
+
+        return cookie;
     }
 }
