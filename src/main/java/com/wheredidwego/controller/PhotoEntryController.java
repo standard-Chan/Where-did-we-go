@@ -39,7 +39,7 @@ public class PhotoEntryController {
         PhotoEntry photoEntry = photoEntryService.uploadPhotoEntry(dto, user);
         // response dto 생성 및 반환
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-        return ResponseEntity.ok().body(responseDto);
+        return ResponseEntity.status(201).body(responseDto);
     }
 
     @GetMapping()
