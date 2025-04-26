@@ -45,8 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String email = jwtUtil.extractEmail(token);
-        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다.") {
-        });
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
         CustomUserDetails userDetails = new CustomUserDetails(user);
 
         // 인증 객체 생성
