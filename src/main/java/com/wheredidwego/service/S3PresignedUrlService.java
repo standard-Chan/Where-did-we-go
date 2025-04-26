@@ -30,8 +30,8 @@ public class S3PresignedUrlService {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    public String getS3PresignedUrl(String userId, String imageName) {
-        String path = userId + "/" + "photoEntry" + "/" + imageName;
+    public String getS3PresignedUrl(String userEmail) {
+        String path = createPathKey(userEmail);
         return generateS3PresignedUrl(path);
     }
 
@@ -61,5 +61,9 @@ public class S3PresignedUrlService {
         }
     }
 
+    private String createPathKey(String userEmail) {
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        return userEmail + "/photoEntry/" + timestamp;
+    }
 
 }
