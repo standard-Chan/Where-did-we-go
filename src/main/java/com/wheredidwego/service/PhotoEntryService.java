@@ -35,10 +35,12 @@ public class PhotoEntryService {
         // 좌표 기반 Region 생성. 기존 좌표가 존재하면 조회
         Region region = regionService.findOrCreateRegion(dto.getLat(), dto.getLng());
 
+        String imagePath = awsS3Util.createImagePath(user.getEmail(), dto.getFilename());
+
         PhotoEntry entry = PhotoEntry.builder()
                 .user(user)
                 .region(region)
-                .photoPath(dto.getPhotoPath())
+                .photoPath(imagePath)
                 .description(dto.getDescription())
                 .takenAt(Date.stringToLocalDate(dto.getTakenAt()))
                 .build();

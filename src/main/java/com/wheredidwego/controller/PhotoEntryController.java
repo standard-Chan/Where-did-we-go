@@ -10,7 +10,6 @@ import com.wheredidwego.service.PhotoEntryService;
 import com.wheredidwego.service.S3Service;
 import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,18 +34,19 @@ public class PhotoEntryController {
         // user 데이터 가져오기
         User user = userService.findUserByEmail(email);
         PhotoEntry photoEntry = photoEntryService.uploadPhotoEntry(dto, user);
+
         // response dto 생성 및 반환
-        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-        return ResponseEntity.status(201).body(responseDto);
+        // PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+        return ResponseEntity.status(201).body("");
     }
 
     @GetMapping()
-    public ResponseEntity<?> getPhotoEntryById(@RequestParam("id") Long id) {
+    public ResponseEntity<?> getPhotoEntryById(@PathVariable("id") Long id) {
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
 
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
         // s3 이미지 다운로드 presigned url
-        responseDto.setPhotoPath(s3Service.getDownloadS3PresignedUrl(id));
+        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(id));
         return ResponseEntity.ok().body(responseDto);
     }
 
@@ -61,7 +61,7 @@ public class PhotoEntryController {
                 .stream()
                 .map(photoEntry -> {
                     PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                    responseDto.setPhotoPath(s3Service.getDownloadS3PresignedUrl(photoEntry.getId()));
+                    responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getId()));
                     return responseDto;
                 }).toList();
 

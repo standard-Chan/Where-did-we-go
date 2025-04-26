@@ -6,12 +6,15 @@ import com.wheredidwego.util.lib.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PhotoEntryResponseDto {
-    private String photoPath;
+    private Long id;
+    @Setter
+    private String photoUrl;
     private String description;
     private String takenAt;
     private Double lat;
@@ -21,7 +24,8 @@ public class PhotoEntryResponseDto {
     private String subdistrict;
 
     public PhotoEntryResponseDto(PhotoEntry photoEntry) {
-        this.photoPath = photoEntry.getPhotoPath();
+        this.id = photoEntry.getId();
+        this.photoUrl = photoEntry.getPhotoPath();
         this.description = photoEntry.getDescription();
         this.takenAt = Date.localDateToString(photoEntry.getTakenAt());
         Region region = photoEntry.getRegion();
@@ -32,7 +36,4 @@ public class PhotoEntryResponseDto {
         this.subdistrict = region.getSubdistrict();
     }
 
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
-    }
 }

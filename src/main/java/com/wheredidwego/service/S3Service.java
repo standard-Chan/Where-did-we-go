@@ -13,8 +13,8 @@ public class S3Service {
     private final AwsS3Util awsS3Util;
     private final PhotoEntryService photoEntryService;
 
-    public String getUploadS3PresignedUrl(String userEmail) {
-        String path = awsS3Util.createPathKey(userEmail);
+    public String getUploadS3PresignedUrl(String userEmail, String filename) {
+        String path = awsS3Util.createImagePath(userEmail, filename);
         return awsS3Util.generateUploadS3PresignedUrl(path);
     }
 

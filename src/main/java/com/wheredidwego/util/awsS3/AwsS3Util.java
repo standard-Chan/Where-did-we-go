@@ -63,9 +63,8 @@ public class AwsS3Util {
         }
     }
 
-    public String createPathKey(String userEmail) {
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        return userEmail + "/photoEntry/" + timestamp;
+    public String createImagePath(String userEmail, String filename) {
+        return userEmail + "/photoEntry/" + filename;
     }
 
     public String generateDownloadPresignedUrl(String path) {
