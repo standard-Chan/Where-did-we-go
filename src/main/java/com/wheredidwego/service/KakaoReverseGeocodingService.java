@@ -21,6 +21,7 @@ public class KakaoReverseGeocodingService {
 
     @Value("${kakao.rest-api-key}")
     private String kakaoRestApiKey;
+    private String KAKAO_REVERGEOCODING_API = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json";
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -29,7 +30,7 @@ public class KakaoReverseGeocodingService {
             throw new GeocodingException("[ERROR]한국을 벗어나는 좌표: " + lng + "," + lat);
         }
         // url 설정
-        String url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json"
+        String url = KAKAO_REVERGEOCODING_API
                 + "?x=" + lng + "&y=" + lat;
 
         // header 설정

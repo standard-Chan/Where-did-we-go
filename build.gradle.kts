@@ -51,6 +51,9 @@ dependencies {
 
     //tymeleaf
     implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+    //aws
+    implementation ("software.amazon.awssdk:s3:2.20.47")
 }
 
 tasks.test {
