@@ -38,7 +38,7 @@ public class RegionController {
             Double lng = Double.parseDouble(lngStr);
             Region region = regionService.findOrCreateRegion(lat, lng);
             RegionInfoDto responseDto = new RegionInfoDto(region);
-            return ResponseEntity.status(201).body("Region이 등록되었습니다.\n" + responseDto);
+            return ResponseEntity.status(201).body(responseDto);
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body("잘못된 형식의 좌표를 입력하였습니다.");
         } catch (GeocodingException e) {
