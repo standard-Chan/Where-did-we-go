@@ -26,8 +26,7 @@ public class PhotoEntryService {
     }
 
     public PhotoEntry uploadPhotoEntry(PhotoEntryUploadDto dto, User user) {
-        // 좌표 기반 Region 생성 or 조회
-        System.out.println("uploadPhotoEntry---------------------------------");
+        // 좌표 기반 Region 생성. 기존 좌표가 존재하면 조회
         Region region = regionService.findOrCreateRegion(dto.getLat(), dto.getLng());
 
         PhotoEntry entry = PhotoEntry.builder()
