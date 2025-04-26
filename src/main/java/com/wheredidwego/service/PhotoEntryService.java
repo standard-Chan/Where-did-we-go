@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -38,5 +40,9 @@ public class PhotoEntryService {
                 .build();
 
         return photoEntryRepository.save(entry);
+    }
+
+    public List<PhotoEntry> getAllPhotoEntriesByUser(User user) {
+        return photoEntryRepository.findAllByUser(user);
     }
 }
