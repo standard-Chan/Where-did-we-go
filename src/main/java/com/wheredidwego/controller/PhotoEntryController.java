@@ -32,9 +32,10 @@ public class PhotoEntryController {
 
         String email = userDetails.getUsername();
         if (email == null) {
-            throw new RuntimeException("[ERROR]: OAuth2 로그인에 이메일 정보가 없습니다.");
+            throw new RuntimeException("OAuth2 로그인에 이메일 정보가 없습니다.");
         }
 
+        // user 데이터 가져오기
         User user = userService.findUserByEmail(email);
         PhotoEntry photoEntry = photoEntryService.uploadPhotoEntry(dto, user);
         // response dto 생성 및 반환
@@ -47,7 +48,7 @@ public class PhotoEntryController {
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
 
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-        // s3 이미지 다운로드 presigned url 링크 저장
+        // s3 이미지 다운로드 presigned url
         responseDto.setPhotoPath(s3PresignedUrlService.getDownloadS3PresignedUrl(id));
         return ResponseEntity.ok().body(responseDto);
     }
@@ -56,7 +57,7 @@ public class PhotoEntryController {
     public ResponseEntity<?> getMyPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
         String email = userDetails.getUsername();
         if (email == null) {
-            throw new RuntimeException("[ERROR]: OAuth2 로그인에 이메일 정보가 없습니다.");
+            return ResponseEntity.badRequest().body("로그인 정보가 존재하지 않습니다. 다시 로그인해주시기 바랍니다.");
         }
 
         User user = userService.findUserByEmail(userDetails.getUsername());
