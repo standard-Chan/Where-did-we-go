@@ -1,5 +1,7 @@
 package com.wheredidwego.service;
 
+import com.wheredidwego.util.aws.S3PresignedUrl;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,55 +17,20 @@ import java.net.URL;
 import java.time.Duration;
 
 
-@Slf4j
+
 @Service
+@RequiredArgsConstructor
 public class S3PresignedUrlService {
-    @Value("${aws.s3.access-key}")
-    private String accessKeyId;
 
-    @Value("${aws.s3.secret-key}")
-    private String secretAccessKey;
+    private final S3PresignedUrl s3PresignedUrl;
 
-    @Value("${aws.s3.region}")
-    private String region;
-
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
-
-    public String getS3PresignedUrl(String userEmail) {
-        String path = createPathKey(userEmail);
-        return generateS3PresignedUrl(path);
+    public String getUploadS3PresignedUrl(String userEmail) {
+        String path = s3PresignedUrl.createPathKey(userEmail);
+        return s3PresignedUrl.generateUploadS3PresignedUrl(path);
     }
 
-    public String generateS3PresignedUrl(String path) {
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
+    public String getDownloadS3PresignedUrl(String photoEntryId) {
 
-        try (S3Presigner presigner = S3Presigner.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .build()) {
-
-            PutObjectRequest objectRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(path)
-                    .build();
-
-            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(10)) // URL 유효 시간
-                    .putObjectRequest(objectRequest)
-                    .build();
-
-            PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
-
-            URL url = presignedRequest.url();
-            log.info("Generated Presigned URL: {}", url.toString());
-            return url.toString();
-        }
-    }
-
-    private String createPathKey(String userEmail) {
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        return userEmail + "/photoEntry/" + timestamp;
     }
 
 }

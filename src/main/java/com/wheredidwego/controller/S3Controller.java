@@ -19,7 +19,7 @@ public class S3Controller {
 
     @GetMapping("/presignedUrl")
     public Map<String, String> getPresignedUrl(@AuthenticationPrincipal String email){
-        String url = s3Service.getS3PresignedUrl(email);
+        String url = s3Service.getUploadS3PresignedUrl(email);
 
         return Map.of("presignedUrl", url);
 
