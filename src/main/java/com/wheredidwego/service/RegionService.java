@@ -18,17 +18,16 @@ public class RegionService {
     private final RegionRepository regionRepository;
     private final KakaoReverseGeocodingService reverseGeocodingService;
 
-    public Region createRegion(Double lat, Double lng) {
-        Optional<Region> optionalRegion = regionRepository.findRegionByLatAndLng(lat, lng);
+    public Region findOrCreateRegion(Double lat, Double lng) {
 
-        // 중복된 Region
-        if (optionalRegion.isPresent()) {
-            Region region = optionalRegion.get();
+        // 중복된 Region -> 기존 Region 반환
+        if (regionRepository.existsRegionByLatAndLng(lat, lng)) {
+            Region region = regionRepository.findRegionByLatAndLng(lat, lng).get();
             region.increaseReferenceCount();
             return region;
         }
 
-        // 새로운 Region
+        // 새로운 Region 생성
         RegionInfoDto regionInfo = searchRegion(lat, lng);
         Region newRegion = new Region(lat, lng, regionInfo);
         return regionRepository.save(newRegion);
@@ -36,7 +35,7 @@ public class RegionService {
 
     public Region findRegionById(Long id) {
         return regionRepository.findRegionById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Region id입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR]: 존재하지 않는 Region id입니다."));
     }
 
     public RegionInfoDto searchRegion(Double lat, Double lng) {
@@ -44,7 +43,7 @@ public class RegionService {
         try {
             regionInfo = reverseGeocodingService.getRegionFromCoords(lat, lng);
         } catch (GeocodingException e) {
-            regionInfo = new RegionInfoDto("UNKNOWN", "UNKNOWN", "UNKNOWN");
+            throw new GeocodingException("[ERROR]: "+ e.getMessage() + "(" + lat + "," + lng + ")");
         }
         return regionInfo;
     }
