@@ -2,12 +2,9 @@ package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.Region;
 import com.wheredidwego.dto.RegionInfoDto;
-import com.wheredidwego.dto.UserResponseDto;
-import com.wheredidwego.repository.RegionRepository;
 import com.wheredidwego.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -32,8 +29,8 @@ public class RegionController {
         try {
             Double lat = Double.parseDouble(latStr);
             Double lng = Double.parseDouble(lngStr);
-            regionService.createRegion(lat, lng);
-            return ResponseEntity.ok().body("Region이 등록되었습니다.");
+            Region region = regionService.findOrCreateRegion(lat, lng);
+            return ResponseEntity.ok().body("Region이 등록되었습니다." + region);
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body("잘못된 형식의 좌표를 입력하였습니다.");
         }

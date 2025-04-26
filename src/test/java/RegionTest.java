@@ -25,7 +25,7 @@ public class RegionTest {
 
     @Test
     public void checkRegion() {
-        regionService.createRegion(y, x);
+        regionService.findOrCreateRegion(y, x);
 
         Region region = regionService.findRegionById(1L);
         assertEquals("경기도", region.getProvince());
