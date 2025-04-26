@@ -1,5 +1,6 @@
 package com.wheredidwego.dto;
 
+import com.wheredidwego.domain.Region;
 import lombok.Getter;
 
 @Getter
@@ -12,5 +13,11 @@ public class RegionInfoDto {
         this.province = province;
         this.district = district;
         this.subdistrict = subdistrict;
+    }
+
+    public RegionInfoDto(Region region) {
+        this.province = region.getProvince();
+        this.district = region.getDistrict();
+        this.subdistrict = region.getSubdistrict();
     }
 }

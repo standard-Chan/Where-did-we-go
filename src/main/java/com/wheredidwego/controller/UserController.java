@@ -18,7 +18,6 @@ public class UserController {
 
     @GetMapping("/users/me")
     public UserResponseDto getCurrentUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        String email = userDetails.getUsername();
         return userService.getUserResponseDtoByUserDetails(userDetails);
     }
 }

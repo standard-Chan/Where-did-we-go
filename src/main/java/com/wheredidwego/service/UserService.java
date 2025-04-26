@@ -44,7 +44,7 @@ public class UserService {
     public UserResponseDto getUserResponseDtoByUserDetails(UserDetails userDetails) {
         User user = findUserByEmail(userDetails.getUsername());
         return UserResponseDto.builder()
-                .id(user.getId())
+                .idCode(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .build();
