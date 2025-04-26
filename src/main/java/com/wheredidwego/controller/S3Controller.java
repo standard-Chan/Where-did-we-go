@@ -1,12 +1,11 @@
 package com.wheredidwego.controller;
 
 import com.wheredidwego.security.details.CustomUserDetails;
-import com.wheredidwego.service.S3PresignedUrlService;
+import com.wheredidwego.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -16,7 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class S3Controller {
 
-    private final S3PresignedUrlService s3Service;
+    private final S3Service s3Service;
 
     @GetMapping("/presignedUrl")
     public Map<String, String> getPresignedUrl(@AuthenticationPrincipal CustomUserDetails userDetails){

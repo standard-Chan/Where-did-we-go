@@ -7,9 +7,10 @@ import com.wheredidwego.dto.PhotoEntryUploadDto;
 import com.wheredidwego.repository.PhotoEntryRepository;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.PhotoEntryService;
-import com.wheredidwego.service.S3PresignedUrlService;
+import com.wheredidwego.service.S3Service;
 import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +24,13 @@ public class PhotoEntryController {
 
     private final PhotoEntryService photoEntryService;
     private final UserService userService;
-    private final S3PresignedUrlService s3PresignedUrlService;
+    private final S3Service s3Service;
     private final PhotoEntryRepository photoEntryRepository;
 
     @PostMapping()
     public ResponseEntity<?> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadDto dto,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
-
         String email = userDetails.getUsername();
-        if (email == null) {
-            throw new RuntimeException("OAuth2 로그인에 이메일 정보가 없습니다.");
-        }
 
         // user 데이터 가져오기
         User user = userService.findUserByEmail(email);
@@ -49,16 +46,13 @@ public class PhotoEntryController {
 
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
         // s3 이미지 다운로드 presigned url
-        responseDto.setPhotoPath(s3PresignedUrlService.getDownloadS3PresignedUrl(id));
+        responseDto.setPhotoPath(s3Service.getDownloadS3PresignedUrl(id));
         return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/me")
     public ResponseEntity<?> getMyPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
         String email = userDetails.getUsername();
-        if (email == null) {
-            return ResponseEntity.badRequest().body("로그인 정보가 존재하지 않습니다. 다시 로그인해주시기 바랍니다.");
-        }
 
         User user = userService.findUserByEmail(userDetails.getUsername());
         List<PhotoEntry> photoEntries = photoEntryRepository.findAllByUser(user);
@@ -67,10 +61,20 @@ public class PhotoEntryController {
                 .stream()
                 .map(photoEntry -> {
                     PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                    responseDto.setPhotoPath(s3PresignedUrlService.getDownloadS3PresignedUrl(photoEntry.getId()));
+                    responseDto.setPhotoPath(s3Service.getDownloadS3PresignedUrl(photoEntry.getId()));
                     return responseDto;
                 }).toList();
 
         return ResponseEntity.ok().body(responseDtos);
+    }
+
+    @DeleteMapping("/{photoEntryId}")
+    public ResponseEntity<?> deleteImageById(@PathVariable("photoEntryId") Long photoEntryId,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(photoEntryId);
+
+        photoEntryService.deletePhotoEntryById(photoEntryId, userDetails);
+
+        return ResponseEntity.ok().body("삭제되었습니다.");
     }
 }

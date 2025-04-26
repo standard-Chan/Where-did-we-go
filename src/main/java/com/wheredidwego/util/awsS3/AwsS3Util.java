@@ -22,7 +22,7 @@ import java.time.Duration;
 
 @Slf4j
 @Component
-public class S3PresignedUrl {
+public class AwsS3Util {
     @Value("${aws.s3.access-key}")
     private String accessKeyId;
     @Value("${aws.s3.secret-key}")
@@ -39,11 +39,7 @@ public class S3PresignedUrl {
          this.awsCreds = AwsBasicCredentials.create(accessKeyId, secretAccessKey);
     }
 
-
-
     public String generateUploadS3PresignedUrl(String path) {
-
-
         try (S3Presigner presigner = S3Presigner.builder()
                 .region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(this.awsCreds))

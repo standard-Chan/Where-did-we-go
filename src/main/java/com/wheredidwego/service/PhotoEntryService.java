@@ -6,9 +6,12 @@ import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.PhotoEntryUploadDto;
 import com.wheredidwego.exception.PhotoEntryException;
 import com.wheredidwego.repository.PhotoEntryRepository;
+import com.wheredidwego.util.awsS3.AwsS3Util;
 import com.wheredidwego.util.lib.Date;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +24,7 @@ public class PhotoEntryService {
 
     private final RegionService regionService;
     private final PhotoEntryRepository photoEntryRepository;
+    private final AwsS3Util awsS3Util;
 
     public PhotoEntry getPhotoEntryById(Long id) {
         return photoEntryRepository.getPhotoEntriesById(id)
@@ -44,5 +48,21 @@ public class PhotoEntryService {
 
     public List<PhotoEntry> getAllPhotoEntriesByUser(User user) {
         return photoEntryRepository.findAllByUser(user);
+    }
+
+    public void deletePhotoEntryById(Long id, UserDetails userDetails) {
+        PhotoEntry photoEntry = getPhotoEntryById(id);
+
+        if (!photoEntry.getUser().getEmail().equals(userDetails.getUsername())) {
+            throw new AuthorizationDeniedException("삭제 권한이 없습니다.");
+        }
+
+        // s3 이미지 삭제
+        String photoPath = photoEntry.getPhotoPath();
+        awsS3Util.deleteImage(photoPath);
+
+        // db 데이터 삭제
+        photoEntryRepository.deleteById(id);
+
     }
 }
