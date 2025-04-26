@@ -20,6 +20,7 @@ public class S3PresignedUrlService {
 
     public String getDownloadS3PresignedUrl(Long id) {
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
+
         String photoS3Path = photoEntry.getPhotoPath();
         return s3PresignedUrl.generateDownloadPresignedUrl(photoS3Path);
     }
