@@ -65,4 +65,16 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("access_token", ""); // 이름은 동일하게
+        cookie.setPath("/"); // 꼭 설정! (쿠키 발급할 때와 동일한 path)
+        //cookie.setHttpOnly(true); // 원래 쿠키가 HttpOnly면 유지
+        //cookie.setSecure(true); // (선택) 원래 Secure면 유지
+        cookie.setMaxAge(0); // 유효기간 0초로 만료
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok().body("로그아웃 완료");
+    }
+
 }
