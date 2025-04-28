@@ -25,11 +25,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // jwt 생성
         String token = jwtUtil.createToken(oAuth2User.getUser().getEmail());
 
+        // redirect uri. session에서 추출 (client에서 query로 보내준 uri)
+        String redirectUri = (String) request.getSession().getAttribute("redirect_uri");
+        if (redirectUri == null) {
+            redirectUri = "http://localhost:8080/success";
+        }
+
         // cookie 생성
         Cookie cookie = jwtUtil.createCookie(token);
         response.addCookie(cookie);
 
         // 프론트로 리다이렉트하면서 파라미터로 jwt 전달
-        response.sendRedirect("http://localhost:8080/success?token=" + token);
+        response.sendRedirect(redirectUri);
     }
 }

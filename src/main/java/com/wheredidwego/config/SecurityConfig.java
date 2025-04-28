@@ -3,6 +3,7 @@ package com.wheredidwego.config;
 import com.wheredidwego.security.filter.JwtAuthenticationFilter;
 import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.security.filter.CustomAuthenticationProvider;
+import com.wheredidwego.security.oauth2.CustomOAuth2AuthorizationRequestResolver;
 import com.wheredidwego.security.oauth2.CustomOAuth2UserService;
 import com.wheredidwego.security.oauth2.OAuth2SuccessHandler;
 import com.wheredidwego.util.JwtUtil;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -69,7 +71,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, InMemoryClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -83,6 +85,9 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
+                        .authorizationEndpoint(authorization -> authorization
+                                .authorizationRequestResolver(new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository))
+                        )
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
