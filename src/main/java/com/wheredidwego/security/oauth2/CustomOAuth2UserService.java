@@ -21,16 +21,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
 
+        // google Oauth 인증
         if (registrationId.equals("google")) {
-            System.out.println("구글 인증");
             String email = oAuth2User.getAttribute("email");
             String nickname = oAuth2User.getAttribute("name");
 
-            // DB에 사용자 정보 가져오기. 없으면 저장
+            // DB에 사용자 정보 가져오기. 신규 사용자일 경우 신규 유저 정보 등록
             User user = userRepository.findUserByEmail(email)
                     .orElseGet(() -> userRepository.save(new User(email, null, nickname)));
 
-            System.out.println("DB에 유저 정보 저장 완료");
             return new CustomOAuth2User(user);
         }
         else {
