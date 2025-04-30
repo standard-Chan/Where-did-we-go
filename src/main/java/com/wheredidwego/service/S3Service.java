@@ -13,11 +13,22 @@ public class S3Service {
     private final AwsS3Util awsS3Util;
     private final PhotoEntryService photoEntryService;
 
+    /**
+     * S3에 이미지를 업로드 하는 PresignedUrl 발급 메서드
+     * @param userEmail request 대상의 이메일
+     * @param filename 저장할 파일 이름
+     * @return PresignedUrl
+     */
     public String getUploadS3PresignedUrl(String userEmail, String filename) {
         String path = awsS3Util.createImagePath(userEmail, filename);
         return awsS3Util.generateUploadS3PresignedUrl(path);
     }
 
+    /**
+     * S3에서 Image를 다운로드하는 Url 발급
+     * @param id Image를 다운로드할 Photo entry의 id
+     * @return 다운로드 presigned url
+     */
     public String getDownloadS3PresignedUrl(Long id) {
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
 
@@ -25,6 +36,7 @@ public class S3Service {
         return awsS3Util.generateDownloadPresignedUrl(photoS3Path);
     }
 
+    // 이미지 삭제
     public void deleteImage(String imagePath) {
         awsS3Util.deleteImage(imagePath);
     }

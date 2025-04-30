@@ -91,20 +91,26 @@ public class AwsS3Util {
         }
     }
 
+    /**
+     *  S3에 저장된 image를 삭제하는 메서드
+     * @param path S3에 사진이 저장된 경로
+     */
     public void deleteImage(String path) {
         try {
+            // S3 유저 객체 가져오기
             S3Client s3Client = S3Client.builder()
                     .region(Region.of(region))
                     .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
                     .build();
 
+            // 삭제 요청
             DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(path)
                     .build();
 
+            // 삭제
             s3Client.deleteObject(deleteRequest);
-
             log.info("S3 파일 삭제 완료: {}", path);
         } catch (Exception e) {
             log.error("[ERROR] S3 파일 삭제 실패: {}", e.getMessage());

@@ -29,9 +29,8 @@ public class PhotoEntryController {
     @PostMapping()
     public ResponseEntity<?> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadDto dto,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+        // 해당 user의 photo entry 데이터 가져오기
         String email = userDetails.getUsername();
-
-        // user 데이터 가져오기
         User user = userService.findUserByEmail(email);
         PhotoEntry photoEntry = photoEntryService.uploadPhotoEntry(dto, user);
 
@@ -40,23 +39,25 @@ public class PhotoEntryController {
         return ResponseEntity.status(201).body(responseDto);
     }
 
+    // 해당 id의 photo entry 반환
     @GetMapping()
     public ResponseEntity<?> getPhotoEntryById(@PathVariable("id") Long id) {
-        PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
 
+        PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
         // s3 이미지 다운로드 presigned url
         responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(id));
         return ResponseEntity.ok().body(responseDto);
     }
 
+    // photo entry list 반환
     @GetMapping("/me")
     public ResponseEntity<?> getMyPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        String email = userDetails.getUsername();
-
+        // 해당 User 검색
         User user = userService.findUserByEmail(userDetails.getUsername());
         List<PhotoEntry> photoEntries = photoEntryRepository.findAllByUser(user);
 
+        // 해당 User의 Photo entry 목록을 dto에 저장
         List<PhotoEntryResponseDto> responseDtos = photoEntries
                 .stream()
                 .map(photoEntry -> {
@@ -72,7 +73,6 @@ public class PhotoEntryController {
     public ResponseEntity<?> deleteImageById(@PathVariable("photoEntryId") Long photoEntryId,
                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(photoEntryId);
-
         photoEntryService.deletePhotoEntryById(photoEntryId, userDetails);
 
         return ResponseEntity.ok().body("삭제되었습니다.");

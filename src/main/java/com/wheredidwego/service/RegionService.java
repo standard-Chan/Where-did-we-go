@@ -8,8 +8,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -18,6 +16,13 @@ public class RegionService {
     private final RegionRepository regionRepository;
     private final KakaoReverseGeocodingService reverseGeocodingService;
 
+    /**
+     * Region 생성.
+     * 기존 좌표의 Region이 있을 경우, 생성하지 않고 기존 Region 반환
+     * @param lat
+     * @param lng
+     * @return 생성/검색된 Region
+     */
     public Region findOrCreateRegion(Double lat, Double lng) {
 
         // 중복된 Region -> 기존 Region 반환

@@ -31,10 +31,16 @@ public class PhotoEntryService {
                 .orElseThrow(() -> new PhotoEntryException("[ERROR]: ID" + id + "의 PhotoEntry가 존재하지 않습니다."));
     }
 
+    /**
+     * photo entry 업로드
+     * @param dto  업로드할 정보 dto { filename, description, takenAt, lat, lng }
+     * @param user 업로드 대상자
+     * @return  저장된 Entity (PhotoEntry)
+     */
     public PhotoEntry uploadPhotoEntry(PhotoEntryUploadDto dto, User user) {
-        // 좌표 기반 Region 생성. 기존 좌표가 존재하면 조회
+        // 좌표(lat,lng)로 Region 생성. 기존 좌표가 존재하면 조회
         Region region = regionService.findOrCreateRegion(dto.getLat(), dto.getLng());
-
+        // 저장된 image의 경로 ({email}/photoEntry/{filename})
         String imagePath = awsS3Util.createImagePath(user.getEmail(), dto.getFilename());
 
         PhotoEntry entry = PhotoEntry.builder()
@@ -55,16 +61,14 @@ public class PhotoEntryService {
     public void deletePhotoEntryById(Long id, UserDetails userDetails) {
         PhotoEntry photoEntry = getPhotoEntryById(id);
 
+        // 해당 데이터의 소유 USER와 요청 User가 다른 경우
         if (!photoEntry.getUser().getEmail().equals(userDetails.getUsername())) {
             throw new AuthorizationDeniedException("삭제 권한이 없습니다.");
         }
-
         // s3 이미지 삭제
         String photoPath = photoEntry.getPhotoPath();
         awsS3Util.deleteImage(photoPath);
-
         // db 데이터 삭제
         photoEntryRepository.deleteById(id);
-
     }
 }

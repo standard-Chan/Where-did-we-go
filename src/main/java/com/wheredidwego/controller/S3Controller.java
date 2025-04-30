@@ -22,7 +22,8 @@ public class S3Controller {
     @GetMapping("/presignedUrl")
     public ResponseEntity<?> getPresignedUrl(@AuthenticationPrincipal CustomUserDetails userDetails){
 
-        String filename = String.valueOf(System.currentTimeMillis()); // filestamp로 이름 지정
+        // filename 지정: timestamp로 파일명 겹치지 않도록 설정
+        String filename = String.valueOf(System.currentTimeMillis());
         String uploadUrl = s3Service.getUploadS3PresignedUrl(userDetails.getUsername(), filename);
 
         UploadPresignedDto responseDto = new UploadPresignedDto(uploadUrl, filename);

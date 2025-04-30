@@ -16,7 +16,7 @@ public class PhotoEntryResponseDto {
     @Setter
     private String photoUrl;
     private String description;
-    private String takenAt;
+    private String takenAt; // ISO 표준 : 2024-05-06
     private Double lat;
     private Double lng;
     private String province;
