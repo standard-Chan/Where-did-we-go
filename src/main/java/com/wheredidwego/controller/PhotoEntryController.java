@@ -37,6 +37,7 @@ public class PhotoEntryController {
 
         // response dto 생성 및 반환
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getId()));
         return ResponseEntity.status(201).body(responseDto);
     }
 

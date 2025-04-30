@@ -25,7 +25,6 @@ public class PhotoEntryResponseDto {
 
     public PhotoEntryResponseDto(PhotoEntry photoEntry) {
         this.id = photoEntry.getId();
-        this.photoUrl = photoEntry.getPhotoPath();
         this.description = photoEntry.getDescription();
         this.takenAt = DateUtil.localDateToString(photoEntry.getTakenAt());
         Region region = photoEntry.getRegion();
@@ -35,5 +34,4 @@ public class PhotoEntryResponseDto {
         this.district = region.getDistrict();
         this.subdistrict = region.getSubdistrict();
     }
-
 }
