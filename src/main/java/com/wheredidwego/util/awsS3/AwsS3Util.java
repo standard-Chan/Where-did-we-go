@@ -80,7 +80,7 @@ public class AwsS3Util {
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(5)) // 다운로드 URL 유효시간
+                    .signatureDuration(Duration.ofMinutes(10)) // 다운로드 URL 유효시간
                     .getObjectRequest(getObjectRequest)
                     .build();
 

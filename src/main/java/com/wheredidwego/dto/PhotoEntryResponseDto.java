@@ -2,7 +2,7 @@ package com.wheredidwego.dto;
 
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.Region;
-import com.wheredidwego.util.lib.Date;
+import com.wheredidwego.util.lib.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ public class PhotoEntryResponseDto {
         this.id = photoEntry.getId();
         this.photoUrl = photoEntry.getPhotoPath();
         this.description = photoEntry.getDescription();
-        this.takenAt = Date.localDateToString(photoEntry.getTakenAt());
+        this.takenAt = DateUtil.localDateToString(photoEntry.getTakenAt());
         Region region = photoEntry.getRegion();
         this.lat = photoEntry.getRegion().getLat();
         this.lng = photoEntry.getRegion().getLng();

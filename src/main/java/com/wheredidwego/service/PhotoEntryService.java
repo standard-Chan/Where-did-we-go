@@ -7,7 +7,7 @@ import com.wheredidwego.dto.PhotoEntryUploadDto;
 import com.wheredidwego.exception.PhotoEntryException;
 import com.wheredidwego.repository.PhotoEntryRepository;
 import com.wheredidwego.util.awsS3.AwsS3Util;
-import com.wheredidwego.util.lib.Date;
+import com.wheredidwego.util.lib.DateUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -42,7 +42,7 @@ public class PhotoEntryService {
                 .region(region)
                 .photoPath(imagePath)
                 .description(dto.getDescription())
-                .takenAt(Date.stringToLocalDate(dto.getTakenAt()))
+                .takenAt(DateUtil.stringToLocalDate(dto.getTakenAt()))
                 .build();
 
         return photoEntryRepository.save(entry);
