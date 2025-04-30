@@ -5,7 +5,9 @@ import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
 
-    // LocalDate 객체를 문자열 2024-05-06 으로 변환
+    /**
+     *    LocalDate 객체를 dash 문자열로 변환 (ex  2024-05-06)
+     */
     static public String localDateToString(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return date.format(formatter);

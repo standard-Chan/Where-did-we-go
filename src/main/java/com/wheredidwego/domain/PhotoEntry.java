@@ -44,4 +44,16 @@ public class PhotoEntry {
         this.description = description;
         this.takenAt = takenAt;
     }
+
+    public void updateRegion(Region region) {
+        this.region = region;
+    }
+
+    public void updateTakenAt(LocalDate takenAt) {
+        this.takenAt = takenAt;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
 }

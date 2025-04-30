@@ -3,7 +3,8 @@ package com.wheredidwego.controller;
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.PhotoEntryResponseDto;
-import com.wheredidwego.dto.PhotoEntryUploadDto;
+import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
+import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
 import com.wheredidwego.repository.PhotoEntryRepository;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.PhotoEntryService;
@@ -27,7 +28,7 @@ public class PhotoEntryController {
     private final PhotoEntryRepository photoEntryRepository;
 
     @PostMapping()
-    public ResponseEntity<?> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadDto dto,
+    public ResponseEntity<?> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadRequestDto dto,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
         // 해당 user의 photo entry 데이터 가져오기
         String email = userDetails.getUsername();
@@ -69,12 +70,23 @@ public class PhotoEntryController {
         return ResponseEntity.ok().body(responseDtos);
     }
 
+    // photo entry 삭제
     @DeleteMapping("/{photoEntryId}")
-    public ResponseEntity<?> deleteImageById(@PathVariable("photoEntryId") Long photoEntryId,
+    public ResponseEntity<?> deletePhotoEntryById(@PathVariable("photoEntryId") Long photoEntryId,
                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(photoEntryId);
         photoEntryService.deletePhotoEntryById(photoEntryId, userDetails);
 
         return ResponseEntity.ok().body("삭제되었습니다.");
+    }
+
+    @PutMapping()
+    public ResponseEntity<?> updatePhotoEntryById(@RequestBody PhotoEntryUpdateRequestDto requestDto) {
+
+        PhotoEntry photoEntry = photoEntryService.updatePhotoEntry(requestDto);
+        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+
+        return ResponseEntity.status(200).body(responseDto);
     }
 }

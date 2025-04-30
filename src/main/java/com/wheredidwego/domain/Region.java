@@ -41,4 +41,7 @@ public class Region {
         this.referenceCount++;
     }
 
+    public void decreaseReferenceCount() {
+        this.referenceCount--;
+    }
 }
