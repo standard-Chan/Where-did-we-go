@@ -54,6 +54,9 @@ dependencies {
 
     // AWS S3 v2
     implementation("software.amazon.awssdk:s3:2.29.52")
+
+    //MYSQL
+    implementation("mysql:mysql-connector-java:8.0.33")
 }
 
 tasks.test {
