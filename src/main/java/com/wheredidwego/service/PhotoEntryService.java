@@ -11,6 +11,7 @@ import com.wheredidwego.util.awsS3.AwsS3Util;
 import com.wheredidwego.util.lib.DateUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -110,4 +111,5 @@ public class PhotoEntryService {
 
         return photoEntryRepository.save(photoEntry);
     }
+
 }
