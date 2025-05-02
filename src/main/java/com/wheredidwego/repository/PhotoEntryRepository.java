@@ -16,5 +16,5 @@ public interface PhotoEntryRepository extends JpaRepository<PhotoEntry, Long> {
 
     List<PhotoEntry> findAllByUser(User user);
 
-    Page<PhotoEntry> findAll(Pageable pageable);
+    Page<PhotoEntry> findAllByUser(User user, Pageable pageable);
 }
