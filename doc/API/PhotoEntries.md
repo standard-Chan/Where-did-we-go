@@ -8,14 +8,15 @@ AWS S3에 사진을 저장하고, 서버에는 사진 메타데이터(설명, �
 
 ## 2. 엔드포인트
 
-| 메서드 | URL                                         | 설명 |
-|:---|:--------------------------------------------|:---|
-| GET | `/api/photo-entries/me`                     | 내 사진 목록 전체 조회 |
-| POST | `/api/photo-entries`                        | 사진 업로드 및 활동 등록 |
-| GET | `/api/photo-entries/:id`                    | id로 내 사진/활동 상세 조회 |
-| DELETE | `/api/photo-entries/:id`                    | 내 사진/활동 삭제 |
+| 메서드 | URL                                         | 설명                             |
+|:---|:--------------------------------------------|:-------------------------------|
+| GET | `/api/photo-entries/me`                     | 내 사진 목록 전체 조회                  |
+| POST | `/api/photo-entries`                        | 사진 업로드 및 활동 등록                 |
+| GET | `/api/photo-entries/:id`                    | id로 내 사진/활동 상세 조회              |
+| DELETE | `/api/photo-entries/:id`                    | 내 사진/활동 삭제                     |
 | GET | `/api/s3/presignedUrl`                      | S3 Presigned URL + filename 발급 |
-| GET (구현 예정) | `/api/photo-entries/search?lat=...&lng=...` | 자포로 내 사진/활동 조회 |
+| GET | `/api/search/photo-entries?`                | 정렬된 사진/활동 조회                   |
+| GET (구현 예정) | `/api/photo-entries/search?lat=...&lng=...` | 자포로 내 사진/활동 조회                 |
 
 ---
 
@@ -150,10 +151,55 @@ AWS S3에 사진을 저장하고, 서버에는 사진 메타데이터(설명, �
 
 ---
 
+### 4-7. 내 사진 목록 정렬 및 페이징 조회
+
+- **URL**: `URL: GET /api/search/photo-entries?sort=...&drection=...`
+- **요청 Body**
+
+
+- **요청 파라미터**
+
+    - sort (기본값: takenAt): 정렬 기준 필드
+      - sort 가능 값 (region, takenAt)
+    - direction (기본값: desc): 오름차순 or 내림차순 
+    - page (기본값: 0): 페이지 번호 (0부터 시작)
+    - size (기본값: 10): 페이지당 항목 수
+
+응답 예시:
+GET /api/search/photo-entries?sort=takenAt&drection=asc&page=10&size=10
+```
+    {
+        "content": [
+            {
+                "id": 1,
+                "photoUrl": "https://signed-download-url",
+                "description": "카페",
+                "takenAt": "2024-05-06",
+                "lat": 37.561,
+                "lng": 126.982,
+                "province": "서울특별시",
+                "district": "중구",
+                "subdistrict": "을지로동"
+            },
+            { ... }
+        ],
+            "pageable": {
+            "pageNumber": 0,
+            "pageSize": 10
+        },
+        "totalPages": 3,
+        "totalElements": 25
+    }
+```
+
+- ***참고***
+    - 사용자 자신의 데이터에 대해서만 페이징 조회됩니다.
+    - 정렬 필드는 유효한 컬럼 값이어야 합니다.
+
 ### 4-7. 자포 기반 사진/활동 조회 (구현 예정)
 
-- **URL**: `GET /api/photo-entries/search?lat=...&lng=...`
-- **설명**: 주어진 자포의 근처에 담겨진 사진/활동 기록 조회
+- **URL**: `GET /api/search/photo-entries?lat=...&lng=...`
+- **설명**: 주어진 좌표의 근처에 담겨진 사진/활동 기록 조회
 - **상태**: 구현 예정
 
 ---
