@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface FriendsRequestRepository extends JpaRepository<FriendRequest, Long> {
+public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long> {
+
     Optional<FriendRequest> findFriendRequestsByReceiver(User receiver);
     Optional<FriendRequest> findFriendRequestsBySender(User sender);
+
+    boolean existsFriendRequestBySenderAndReceiver(User sender, User receiver);
 }

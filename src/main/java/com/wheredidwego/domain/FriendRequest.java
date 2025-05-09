@@ -1,6 +1,7 @@
 package com.wheredidwego.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,4 +30,10 @@ public class FriendRequest {
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
+
+    public FriendRequest(User sender, User receiver) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.status = RequestStatus.PENDING;
+    }
 }
