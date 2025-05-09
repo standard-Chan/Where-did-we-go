@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -20,6 +21,9 @@ public class User {
     private String email;
     private String password;
     private String nickname;
+
+    @OneToMany
+    private Set<Friend> friends;
 
     @CreationTimestamp
     private Timestamp createdAt;

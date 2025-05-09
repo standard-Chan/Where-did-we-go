@@ -5,6 +5,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 설명 : 친구 요청 수락 시에 생성되는 entity.
+ * 기타
+ *  - user, friend 가 중복이 없도록 Unique 제약조건으로 설계
+ *  - 단방향으로 친구 요청 수락시 2개의 entity가 생성된다. 확장성을 고려하여 단방향으로 설정.
+ */
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,5 +28,5 @@ public class Friend {
     @ManyToOne(fetch = FetchType.LAZY)
     private User friend;
 
-    private Integer accessLevel;
+    // 기능 구현 후 추가 예정 private Integer accessLevel;
 }
