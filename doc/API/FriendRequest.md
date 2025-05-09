@@ -48,21 +48,35 @@
 - **URL**: `GET /api/v1/friends-request?type=`
 - **설명**: 받은 친구 요청 / 보낸 친구 요청 검색 
 - **요청 파라미터**:
-    - `type`: 받은 요청 `received`, 보낸요청 `sent`
-    - 예: `/api/v1/friends-request?type=PENDING`
+    - `type`: 받은 요청 `RECEIVED`, 보낸요청 `SENT`
+    - 예: `/api/v1/friends-request?type=SENT`
 
 - **응답 예시**:
+- /api/v1/friends-request?type=RECEIVED
 ```json
 [
   {
     "friendRequestId": 1001,
     "senderNickname": "jeong",
     "senderEmail": "jeong@example.com",
-    "requestedAt": "2025-05-08T13:30:00"
+    "requestedAt": "2025-05-08T13:30:00",
+    "status": "PENDING"
   }, 
   {
     ...
   }
+]
+```
+- /api/v1/friends-request?type=SENT
+```json
+[
+    {
+        "friendRequestId": 1,
+        "receiverNickname": "홍길동",
+        "receiverEmail": "hong@example.com",
+        "requestedAt": "2025-05-09 15:29:55",
+        "status": "PENDING"
+    }
 ]
 ```
 - **기타**: 

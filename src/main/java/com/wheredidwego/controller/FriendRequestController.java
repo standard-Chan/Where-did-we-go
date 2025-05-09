@@ -3,6 +3,7 @@ package com.wheredidwego.controller;
 import com.wheredidwego.domain.FriendRequest;
 import com.wheredidwego.dto.FriendRequestDto;
 import com.wheredidwego.dto.ReceivedFriendRequestResponseDto;
+import com.wheredidwego.dto.SentFriendRequestResponseDto;
 import com.wheredidwego.exception.FriendRequestException;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.FriendRequestService;
@@ -35,17 +36,30 @@ public class FriendRequestController {
 
     /** 친구 보낸 요청/ 받은 친구 요청 검색 */
     @GetMapping()
-    public ResponseEntity<?> searchFriendRequests(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        //         @RequestParam("type")String type) {
+    public ResponseEntity<?> searchFriendRequests(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                  @RequestParam("type")String type) {
         try {
-            //
-            //List<FriendRequest> response = friendRequestService.handleSearchRequest(userDetails, type);
-            List<FriendRequest> friendRequestList = friendRequestService.handleSearchRequest(userDetails, "received");
+            List<FriendRequest> friendRequestList = friendRequestService.handleSearchRequest(userDetails, type);
+
+            // 받은 친구 요청 조회
+            if (type.equalsIgnoreCase("RECEIVED")) {
             List<ReceivedFriendRequestResponseDto> response = friendRequestList
                     .stream().map(ReceivedFriendRequestResponseDto::new)
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(response);
+            }
+
+            // 보낸 친구 요청 조회
+            else {
+                List<SentFriendRequestResponseDto> response = friendRequestList
+                        .stream().map(SentFriendRequestResponseDto::new)
+                        .collect(Collectors.toList());
+
+                return ResponseEntity.ok().body(response);
+            }
+
+
         } catch (FriendRequestException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

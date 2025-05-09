@@ -7,19 +7,20 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
 @Getter
-public class ReceivedFriendRequestResponseDto {
+@NoArgsConstructor
+public class SentFriendRequestResponseDto {
     private Long friendRequestId;
-    private String senderNickname;
-    private String senderEmail;
+    private String receiverNickname;
+    private String receiverEmail;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime requestedAt;
     private String status;
 
-    public ReceivedFriendRequestResponseDto(FriendRequest friendRequest) {
+    public SentFriendRequestResponseDto(FriendRequest friendRequest) {
         this.friendRequestId = friendRequest.getId();
-        this.senderNickname = friendRequest.getSender().getNickname();
-        this.senderEmail = friendRequest.getSender().getEmail();
+        this.receiverNickname = friendRequest.getReceiver().getNickname();
+        this.receiverEmail = friendRequest.getReceiver().getEmail();
         this.requestedAt = friendRequest.getRequestedAt();
         this.status = friendRequest.getStatus().getDescription();
     }

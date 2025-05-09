@@ -4,13 +4,11 @@ import com.wheredidwego.domain.FriendRequest;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.exception.FriendRequestException;
 import com.wheredidwego.repository.FriendRequestRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -70,9 +68,9 @@ public class FriendRequestService {
      */
     public List<FriendRequest> SearchRequestByType(User user, String type) {
         if (type.equalsIgnoreCase("SENT")) {
-            return friendRequestRepository.findFriendRequestsByReceiver(user);
-        } else if (type.equalsIgnoreCase("RECEIVED")) {
             return friendRequestRepository.findFriendRequestsBySender(user);
+        } else if (type.equalsIgnoreCase("RECEIVED")) {
+            return friendRequestRepository.findFriendRequestsByReceiver(user);
         }
         throw new FriendRequestException("잘못된 param TYPE이 전달되었습니다. (type은 sent 혹은 received 이어야 합니다.)");
     }

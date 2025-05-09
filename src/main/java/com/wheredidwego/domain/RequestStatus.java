@@ -1,9 +1,9 @@
 package com.wheredidwego.domain;
 
 public enum RequestStatus {
-    PENDING("연기"),
-    ACCEPTED("수락"),
-    REJECTED("거절");
+    PENDING("PENDING"),
+    ACCEPTED("ACCEPTED"),
+    REJECTED("REJECTED");
 
     private final String description;
 
