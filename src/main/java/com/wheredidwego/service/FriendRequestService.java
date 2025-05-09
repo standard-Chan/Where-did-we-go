@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,19 +18,6 @@ public class FriendRequestService {
 
     private final FriendRequestRepository friendRequestRepository;
     private final UserService userService;
-
-    /**
-     *  해당 데이터가 없을 수도 있으므로 Optional로 return
-     * @param sender
-     * @return Optional<FriendRequest>
-     */
-    public Optional<FriendRequest> getFriendRequestBySender(User sender) {
-        return friendRequestRepository.findFriendRequestsBySender(sender);
-    }
-
-    public Optional<FriendRequest> getFriendRequestByReceiver(User receiver) {
-        return friendRequestRepository.findFriendRequestsBySender(receiver);
-    }
 
     /**
      * 중간 역할 (도메인 객체 변환 + 내부 로직 호출)
@@ -61,4 +49,32 @@ public class FriendRequestService {
         FriendRequest friendRequest = new FriendRequest(sender, receiver);
         return friendRequestRepository.save(friendRequest);
     }
+
+    /**
+     * userDetails를 친구요청 전송 목록, 혹은 친구 요청을 받은 목록 검색을 위한 중간역할 (도메인 객체 변환 + 내부 로직 호출)
+     * @param userDetails 친구 요청 검색 대상자
+     * @param type 확인할 요청 타입 ( sent / received )
+     * @return
+     */
+    public List<FriendRequest> handleSearchRequest(UserDetails userDetails, String type) {
+        User user = userService.findUserByEmail(userDetails.getUsername());
+
+        return SearchRequestByType(user, type);
+    }
+
+    /**
+     * 친구 요청 전송 목록, 혹은 친구 요청을 받은 목록 검색
+     * @param user
+     * @param type
+     * @return 친구 요청 목록
+     */
+    public List<FriendRequest> SearchRequestByType(User user, String type) {
+        if (type.equalsIgnoreCase("SENT")) {
+            return friendRequestRepository.findFriendRequestsByReceiver(user);
+        } else if (type.equalsIgnoreCase("RECEIVED")) {
+            return friendRequestRepository.findFriendRequestsBySender(user);
+        }
+        throw new FriendRequestException("잘못된 param TYPE이 전달되었습니다. (type은 sent 혹은 received 이어야 합니다.)");
+    }
+
 }

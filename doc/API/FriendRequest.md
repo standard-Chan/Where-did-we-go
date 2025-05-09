@@ -45,28 +45,28 @@
 
 ### 3-2. 친구 요청 목록 조회
 
-- **URL**: `GET /api/v1/friends-request`
-- **설명**: 로그인 유저에게 온 친구 요청 목록 조회
+- **URL**: `GET /api/v1/friends-request?type=`
+- **설명**: 받은 친구 요청 / 보낸 친구 요청 검색 
 - **요청 파라미터**:
-    - `status`: (선택) 필터 조건. `PENDING`, `ACCEPTED`, `REJECTED`
-    - 예: `/api/v1/friends-request?status=PENDING`
+    - `type`: 받은 요청 `received`, 보낸요청 `sent`
+    - 예: `/api/v1/friends-request?type=PENDING`
 
 - **응답 예시**:
 ```json
 [
   {
-    "requestId": 1001,
-    "sender": {
-      "id": 23,
-      "nickname": "jeong",
-      "email": "jeong@example.com"
-    },
-    "status": "PENDING",
+    "friendRequestId": 1001,
+    "senderNickname": "jeong",
+    "senderEmail": "jeong@example.com",
     "requestedAt": "2025-05-08T13:30:00"
+  }, 
+  {
+    ...
   }
 ]
 ```
-
+- **기타**: 
+  - 보낸 요청의 경우 PENDING 상태의 요청만 보임.
 ---
 
 ### 3-3. 친구 요청 수락 / 거절
