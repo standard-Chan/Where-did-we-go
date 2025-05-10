@@ -34,7 +34,7 @@ public class User {
         this.nickname = nickname;
     }
 
-    public addFriend() {
-
+    public void addFriend(Friend friend) {
+        this.friends.add(friend);
     }
 }

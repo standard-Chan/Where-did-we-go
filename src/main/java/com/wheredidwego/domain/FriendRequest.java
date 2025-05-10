@@ -36,4 +36,12 @@ public class FriendRequest {
         this.receiver = receiver;
         this.status = RequestStatus.PENDING;
     }
+
+    public void setStatus(RequestStatus status) {
+        this.status = status;
+    }
+
+    public void setRespondedAt(LocalDateTime respondedAt) {
+        this.respondedAt = respondedAt;
+    }
 }

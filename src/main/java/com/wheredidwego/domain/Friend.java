@@ -29,5 +29,15 @@ public class Friend {
     private User friend;
 
     @Enumerated(EnumType.STRING)
-    private Integer accessLevel;
+    private FriendAccessLevel accessLevel;
+
+    public Friend(User user, User friend) {
+        this.user = user;
+        this.friend = friend;
+        this.accessLevel = FriendAccessLevel.LOCATION_ONLY; // 기본 값으로 저장한 좌표만 확인 가능
+    }
+
+    public void setAccessLevel(FriendAccessLevel accessLevel) {
+        this.accessLevel = accessLevel;
+    }
 }

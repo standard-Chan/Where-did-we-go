@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class FriendRequestDecisionDto {
-    private Long requestId;
+    private Long friendRequestId;
     private RequestStatus status;
 }
