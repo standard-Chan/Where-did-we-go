@@ -1,6 +1,8 @@
 package com.wheredidwego.service;
 
+import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.FriendRequest;
+import com.wheredidwego.domain.RequestStatus;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.exception.FriendRequestException;
 import com.wheredidwego.repository.FriendRequestRepository;
@@ -75,4 +77,34 @@ public class FriendRequestService {
         throw new FriendRequestException("잘못된 param TYPE이 전달되었습니다. (type은 sent 혹은 received 이어야 합니다.)");
     }
 
+    public FriendRequest searchRequestById(Long id) {
+        return friendRequestRepository.findFriendRequestById(id)
+                .orElseThrow(() -> new FriendRequestException("해당 id의 친구요청을 찾을 수 없습니다."));
+    }
+
+    /**
+     * Controller 와 메인로직(친구 요청 처리) 사이 중간 처리 역할
+     * @param userDetails
+     * @param friendRequestId
+     * @param status (ACCEPTED, REJECTED)
+     */
+    public FriendRequest FriendRequestDecisionHandler(UserDetails userDetails, Long friendRequestId, RequestStatus status) {
+        FriendRequest friendRequest = searchRequestById(friendRequestId);
+        User user = userService.findUserByEmail(userDetails.getUsername());
+
+        // 수락 시
+        if (status == RequestStatus.ACCEPTED) {
+            return temp();
+        }
+        // 거절 시
+        else if (status == RequestStatus.REJECTED) {
+            return temp();
+        } else {
+            throw new FriendRequestException("잘못된 STATUS 값입니다. STATUS는 REJECT, ACCEPTED 이어야 합니다.");
+        }
+    }
+
+    public FriendRequest temp(){
+        return new FriendRequest();
+    }
 }
