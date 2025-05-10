@@ -79,8 +79,7 @@
     }
 ]
 ```
-- **기타**: 
-  - 보낸 요청의 경우 PENDING 상태의 요청만 보임.
+- **기타**
 ---
 
 ### 3-3. 친구 요청 수락 / 거절
@@ -89,26 +88,28 @@
 - **요청 Body**:
 ```json
 {
-  "requestId": 1001,
-  "status": "ACCEPTED"  // 또는 "REJECTED"
+  "friendRequestId": 1,
+  "status": "ACCEPTED" 
 }
 ```
 - **응답 예시**:
 ```json
 {
-  "requestId": 1001,
-  "status": "ACCEPTED",
-  "respondedAt": "2025-05-08T14:00:00"
+  "receiverNickname": "홍길동",
+  "receiverEmail": "hong@example.com",
+  "senderNickname": "이산",
+  "senderEmail": "2san@example.com",
+  "respondedAt": "2025-05-09 15:29:55",
+  "status": "ACCEPTED"
 }
 ```
 
 - **참고**:
     - `ACCEPTED`일 경우 Friend 엔티티가 자동 생성됩니다.
-    - `REJECTED`일 경우 FriendRequest 엔티티가 자동 삭제됩니다.
     - Bad Request(400)
       - 잘못된 JSON 응답
       - 친구 중복 처리 시
-
+      - 해당 요청을 이미 보냈을 경우(요청을 받는 사람이 PENDING 상태인 경우)
 ---
 
 ## 4. 응답 코드 정보
