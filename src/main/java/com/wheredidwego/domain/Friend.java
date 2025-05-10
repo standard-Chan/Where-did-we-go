@@ -28,5 +28,6 @@ public class Friend {
     @ManyToOne(fetch = FetchType.LAZY)
     private User friend;
 
-    // 기능 구현 후 추가 예정 private Integer accessLevel;
+    @Enumerated(EnumType.STRING)
+    private Integer accessLevel;
 }
