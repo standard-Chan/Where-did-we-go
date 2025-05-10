@@ -1,4 +1,4 @@
-package com.wheredidwego.dto;
+package com.wheredidwego.dto.friendDto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wheredidwego.domain.FriendRequest;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class SentFriendRequestResponseDto {
+public class FriendRequestResponseDto {
     private Long friendRequestId;
     private String receiverNickname;
     private String receiverEmail;
@@ -17,7 +17,7 @@ public class SentFriendRequestResponseDto {
     private LocalDateTime requestedAt;
     private String status;
 
-    public SentFriendRequestResponseDto(FriendRequest friendRequest) {
+    public FriendRequestResponseDto(FriendRequest friendRequest) {
         this.friendRequestId = friendRequest.getId();
         this.receiverNickname = friendRequest.getReceiver().getNickname();
         this.receiverEmail = friendRequest.getReceiver().getEmail();

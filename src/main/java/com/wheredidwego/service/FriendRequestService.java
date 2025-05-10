@@ -45,6 +45,9 @@ public class FriendRequestService {
     public FriendRequest createFriendRequest(User sender, User receiver) {
         // 예외 처리
         // 해당 user와 이미 친구일 경우
+        if (friendRepository.existsFriendByUserAndFriend(sender, receiver)) {
+            throw new FriendRequestException("이미 친구상태인 유저입니다.");
+        }
 
         // 해당 친구 요청을 이미 보낸 경우 (승인/보류의 경우에 한해서)
         if (friendRequestRepository.existsFriendRequestBySenderAndReceiverAndStatus(sender, receiver, RequestStatus.ACCEPTED)

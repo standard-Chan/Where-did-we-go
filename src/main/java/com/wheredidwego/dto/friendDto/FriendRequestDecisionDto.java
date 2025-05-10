@@ -1,4 +1,4 @@
-package com.wheredidwego.dto;
+package com.wheredidwego.dto.friendDto;
 
 import com.wheredidwego.domain.RequestStatus;
 import lombok.Getter;

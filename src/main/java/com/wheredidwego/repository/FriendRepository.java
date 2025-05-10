@@ -11,4 +11,8 @@ import java.util.List;
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     List<Friend> findAllByUser(User user);
+
+    boolean findByUserAndFriend(User user, User friend);
+
+    boolean existsFriendByUserAndFriend(User user, User friend);
 }

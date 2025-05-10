@@ -2,6 +2,10 @@ package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.FriendRequest;
 import com.wheredidwego.dto.*;
+import com.wheredidwego.dto.friendDto.FriendRequestDecisionDto;
+import com.wheredidwego.dto.friendDto.FriendRequestDecisionResponseDto;
+import com.wheredidwego.dto.friendDto.FriendRequestDto;
+import com.wheredidwego.dto.friendDto.FriendRequestResponseDto;
 import com.wheredidwego.exception.FriendRequestException;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.FriendRequestService;
@@ -26,14 +30,14 @@ public class FriendRequestController {
 
         try {
             FriendRequest friendRequest = friendRequestService.handleRequest(userDetails, requestDto.getFriendEmail());
-
-            return ResponseEntity.status(201).body(friendRequest);
+            FriendRequestResponseDto response = new FriendRequestResponseDto(friendRequest);
+            return ResponseEntity.status(201).body(response);
         } catch (FriendRequestException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    /** 친구 보낸 요청/ 받은 친구 요청 검색 */
+    /** 친구 보낸 요청, 받은 친구 요청 검색 */
     @GetMapping()
     public ResponseEntity<?> searchFriendRequests(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                   @RequestParam("type")String type) {
@@ -48,17 +52,13 @@ public class FriendRequestController {
 
             return ResponseEntity.ok(response);
             }
-
             // 보낸 친구 요청 조회
             else {
-                List<SentFriendRequestResponseDto> response = friendRequestList
-                        .stream().map(SentFriendRequestResponseDto::new)
+                List<FriendRequestResponseDto> response = friendRequestList
+                        .stream().map(FriendRequestResponseDto::new)
                         .collect(Collectors.toList());
-
                 return ResponseEntity.ok().body(response);
             }
-
-
         } catch (FriendRequestException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

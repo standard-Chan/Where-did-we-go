@@ -1,4 +1,4 @@
-package com.wheredidwego.dto;
+package com.wheredidwego.dto.friendDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
