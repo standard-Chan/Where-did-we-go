@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * 설명 : 친구 요청 수락 시에 생성되는 entity.
@@ -23,6 +24,7 @@ public class Friend {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +37,12 @@ public class Friend {
         this.user = user;
         this.friend = friend;
         this.accessLevel = FriendAccessLevel.LOCATION_ONLY; // 기본 값으로 저장한 좌표만 확인 가능
+    }
+
+    // Friend를 삭제할때, 참조 관계를 null로 만들기 위함
+    public void setNull() {
+        this.user = null;
+        this.friend = null;
     }
 
     public void setAccessLevel(FriendAccessLevel accessLevel) {

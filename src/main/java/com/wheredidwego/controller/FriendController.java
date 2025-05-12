@@ -9,9 +9,7 @@ import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
@@ -32,5 +30,15 @@ public class FriendController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping("/{friendEmail}")
+    public ResponseEntity<?> deleteFriend(@PathVariable("friendEmail")String friendEmail,
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        User friendUser = userService.findUserByEmail(friendEmail);
+
+        friendService.deleteFriend(user, friendUser);
+
+        return ResponseEntity.ok().build();
+    }
 
 }
