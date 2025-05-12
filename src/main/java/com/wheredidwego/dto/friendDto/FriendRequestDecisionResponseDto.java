@@ -4,6 +4,8 @@ import com.wheredidwego.domain.FriendRequest;
 import com.wheredidwego.domain.RequestStatus;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 public class FriendRequestDecisionResponseDto {
@@ -11,6 +13,7 @@ public class FriendRequestDecisionResponseDto {
     private String receiverEmail;
     private String senderNickname;
     private String senderEmail;
+    private LocalDateTime respondedAt;
     private RequestStatus status;
 
     public FriendRequestDecisionResponseDto(FriendRequest friendRequest) {
@@ -18,6 +21,7 @@ public class FriendRequestDecisionResponseDto {
         this.senderEmail = friendRequest.getSender().getEmail();
         this.receiverNickname = friendRequest.getReceiver().getNickname();
         this.receiverEmail = friendRequest.getReceiver().getEmail();
+        this.respondedAt = friendRequest.getRespondedAt();
         this.status = friendRequest.getStatus();
     }
 }
