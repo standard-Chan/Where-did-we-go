@@ -66,7 +66,7 @@ public class FriendRequestController {
 
     // 친구 요청 수락/거절 처리
     @PatchMapping()
-    public ResponseEntity<?> responseToRequest(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<?> updateStatus(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                @RequestBody FriendRequestDecisionDto requestDto) {
         try {
             FriendRequest friendRequest = friendRequestService.FriendRequestDecisionHandler(userDetails, requestDto.getFriendRequestId(), requestDto.getStatus());

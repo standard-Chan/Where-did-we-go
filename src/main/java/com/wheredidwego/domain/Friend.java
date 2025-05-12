@@ -31,12 +31,17 @@ public class Friend {
     private User friend;
 
     @Enumerated(EnumType.STRING)
+    @Setter
     private FriendAccessLevel accessLevel;
+
+    @Setter
+    private String description;
 
     public Friend(User user, User friend) {
         this.user = user;
         this.friend = friend;
         this.accessLevel = FriendAccessLevel.LOCATION_ONLY; // 기본 값으로 저장한 좌표만 확인 가능
+        this.description = "";
     }
 
     // Friend를 삭제할때, 참조 관계를 null로 만들기 위함
@@ -45,7 +50,4 @@ public class Friend {
         this.friend = null;
     }
 
-    public void setAccessLevel(FriendAccessLevel accessLevel) {
-        this.accessLevel = accessLevel;
-    }
 }

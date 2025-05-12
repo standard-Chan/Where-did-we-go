@@ -1,6 +1,7 @@
 package com.wheredidwego.service;
 
 import com.wheredidwego.domain.Friend;
+import com.wheredidwego.domain.FriendAccessLevel;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.repository.FriendRepository;
@@ -22,8 +23,24 @@ public class FriendService {
     private final UserRepository userRepository;
 
     // 해당 유저의 친구 목록 조회
-    public Set<Friend> getFriendsByUser(User user) {
+    public Set<Friend> getFriendsSetByUser(User user) {
         return user.getFriends();
+    }
+
+    public Friend getFriendById(Long friendEntityId) {
+        return friendRepository.getFriendsById(friendEntityId)
+                .orElseThrow(()-> new FriendException("친구 관계가 존재하지 않습니다."));
+    }
+
+    public Friend updateFriend(Friend friend, FriendAccessLevel accessLevel, String description) {
+        if (!(friend.getAccessLevel() == accessLevel)) {
+            friend.setAccessLevel(accessLevel);
+        }
+        if (!description.isEmpty() && !friend.getDescription().equals(description)){
+            friend.setDescription(description);
+        }
+
+        return friendRepository.save(friend);
     }
 
     // 해당 유저의 친구 삭제

@@ -3,6 +3,7 @@ package com.wheredidwego.controller;
 import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.friendDto.FriendResponseDto;
+import com.wheredidwego.dto.friendDto.FriendUpdateDto;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.FriendService;
 import com.wheredidwego.service.UserService;
@@ -25,9 +26,18 @@ public class FriendController {
     public ResponseEntity<?> getFriends(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
         User user = userService.findUserByEmail(userDetails.getUsername());
-        Set<Friend> friends = friendService.getFriendsByUser(user);
+        Set<Friend> friends = friendService.getFriendsSetByUser(user);
         List<FriendResponseDto> response = friends.stream().map(FriendResponseDto::new).toList();
         return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping()
+    public ResponseEntity<?> updateFriendInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                              @RequestBody FriendUpdateDto friendUpdateDto) {
+        Friend friend = friendService.getFriendById(friendUpdateDto.getFriendEntityId());
+        Friend updatedFriend = friendService.updateFriend(friend, friendUpdateDto.getAccessLevel(), friendUpdateDto.getDescription());
+        FriendUpdateDto responseDto = new FriendUpdateDto(updatedFriend);
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{friendEmail}")
