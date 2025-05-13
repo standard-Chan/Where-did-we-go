@@ -44,6 +44,13 @@
 * **URL**: `PUT /api/v1/friends`
 * **요청 Body**:
 
+#### **accessLevel 값** 은 다음과 같습니다.
+ - NONE("권한 없음"),
+ - LOCATION_ONLY("위치 조회 가능"),
+ - VIEW_DETAIL("세부 정보 조회 가능"),
+ - FULL_ACCESS( "모든 접근 가능");"
+
+    
   ```json
   {
     "friendEntityId": 12,

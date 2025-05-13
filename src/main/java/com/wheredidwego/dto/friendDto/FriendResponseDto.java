@@ -7,15 +7,17 @@ import lombok.Getter;
 
 @Getter
 public class FriendResponseDto {
-    private Long friendId;
+    private Long friendEntityId;
     private Long friendUserId;
     private String friendEmail;
     private String friendNickname;
+    private String discription;
     private FriendAccessLevel accessLevel;
 
     public FriendResponseDto(Friend friend) {
-        this.friendId = friend.getId();
+        this.friendEntityId = friend.getId();
         User friendUser = friend.getFriend();
+        this.discription = friend.getDescription();
         this.friendUserId = friendUser.getId();
         this.friendEmail = friendUser.getEmail();
         this.friendNickname = friendUser.getNickname();
