@@ -1,7 +1,7 @@
 package com.wheredidwego.dto.friendDto;
 
 import com.wheredidwego.domain.Friend;
-import com.wheredidwego.domain.FriendAccessLevel;
+import com.wheredidwego.domain.enumerate.FriendAccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

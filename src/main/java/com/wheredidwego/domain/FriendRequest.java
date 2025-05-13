@@ -1,12 +1,11 @@
 package com.wheredidwego.domain;
 
+import com.wheredidwego.domain.enumerate.RequestStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity

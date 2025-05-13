@@ -1,7 +1,7 @@
 package com.wheredidwego.repository;
 
 import com.wheredidwego.domain.FriendRequest;
-import com.wheredidwego.domain.RequestStatus;
+import com.wheredidwego.domain.enumerate.RequestStatus;
 import com.wheredidwego.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -21,4 +21,8 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
     FriendRequest sender(User sender);
 
     boolean existsFriendRequestBySenderAndReceiverAndStatus(User sender, User receiver, RequestStatus status);
+
+    List<FriendRequest> findFriendRequestsBySenderAndStatus(User sender, RequestStatus status);
+
+    List<FriendRequest> findFriendRequestsByReceiverAndStatus(User receiver, RequestStatus status);
 }

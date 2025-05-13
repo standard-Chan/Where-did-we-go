@@ -1,7 +1,7 @@
 package com.wheredidwego.service;
 
 import com.wheredidwego.domain.Friend;
-import com.wheredidwego.domain.FriendAccessLevel;
+import com.wheredidwego.domain.enumerate.FriendAccessLevel;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.repository.FriendRepository;

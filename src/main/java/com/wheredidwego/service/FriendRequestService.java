@@ -2,7 +2,7 @@ package com.wheredidwego.service;
 
 import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.FriendRequest;
-import com.wheredidwego.domain.RequestStatus;
+import com.wheredidwego.domain.enumerate.RequestStatus;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.exception.FriendRequestException;
 import com.wheredidwego.repository.FriendRepository;
@@ -79,9 +79,9 @@ public class FriendRequestService {
      */
     public List<FriendRequest> SearchRequestByType(User user, String type) {
         if (type.equalsIgnoreCase("SENT")) {
-            return friendRequestRepository.findFriendRequestsBySender(user);
+            return friendRequestRepository.findFriendRequestsBySenderAndStatus(user, RequestStatus.PENDING);
         } else if (type.equalsIgnoreCase("RECEIVED")) {
-            return friendRequestRepository.findFriendRequestsByReceiver(user);
+            return friendRequestRepository.findFriendRequestsByReceiverAndStatus(user, RequestStatus.PENDING);
         }
         throw new FriendRequestException("잘못된 param TYPE이 전달되었습니다. (type은 sent 혹은 received 이어야 합니다.)");
     }
