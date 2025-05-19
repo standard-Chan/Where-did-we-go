@@ -37,7 +37,7 @@ public class PhotoEntryController {
 
         // response dto 생성 및 반환
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getId()));
+        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
         return ResponseEntity.status(201).body(responseDto);
     }
 
@@ -48,23 +48,25 @@ public class PhotoEntryController {
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
         // s3 이미지 다운로드 presigned url
-        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(id));
+        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
         return ResponseEntity.ok().body(responseDto);
     }
 
     // photo entry list 반환
     @GetMapping("/me")
     public ResponseEntity<?> getMyPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
         // 해당 User 검색
         User user = userService.findUserByEmail(userDetails.getUsername());
         List<PhotoEntry> photoEntries = photoEntryRepository.findAllByUser(user);
+
 
         // 해당 User의 Photo entry 목록을 dto에 저장
         List<PhotoEntryResponseDto> responseDtos = photoEntries
                 .stream()
                 .map(photoEntry -> {
                     PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                    responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getId()));
+                    responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
                     return responseDto;
                 }).toList();
 

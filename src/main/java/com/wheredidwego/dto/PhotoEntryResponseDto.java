@@ -27,6 +27,7 @@ public class PhotoEntryResponseDto {
         this.id = photoEntry.getId();
         this.description = photoEntry.getDescription();
         this.takenAt = DateUtil.localDateToString(photoEntry.getTakenAt());
+
         Region region = photoEntry.getRegion();
         this.lat = photoEntry.getRegion().getLat();
         this.lng = photoEntry.getRegion().getLng();

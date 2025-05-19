@@ -1,0 +1,6 @@
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdGFycDMyMUBuYXZlci5jb20iLCJpYXQiOjE3NDc2NDU5MTAsImV4cCI6MTc0NzY0OTUxMH0.bAD4Nr2pc7uTtHhOCYtAiQ8sXoS4QbRi4mmE2svZ3jo
+
+### 사진 가져오기
+GET http://localhost:8080/api/photo-entries/me
+Authorization: Bearer {{token}}}
+Content-Type: application/json

@@ -26,13 +26,10 @@ public class S3Service {
 
     /**
      * S3에서 Image를 다운로드하는 Url 발급
-     * @param id Image를 다운로드할 Photo entry의 id
+     * @param photoS3Path S3에 저장되어 있는 Image path
      * @return 다운로드 presigned url
      */
-    public String getDownloadS3PresignedUrl(Long id) {
-        PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
-
-        String photoS3Path = photoEntry.getPhotoPath();
+    public String getDownloadS3PresignedUrl(String photoS3Path) {
         return awsS3Util.generateDownloadPresignedUrl(photoS3Path);
     }
 

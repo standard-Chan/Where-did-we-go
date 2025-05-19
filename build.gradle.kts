@@ -36,7 +36,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-test")
 
     // H2 Database (테스트용 인메모리 DB)
-    runtimeOnly("com.h2database:h2")
+    //runtimeOnly("com.h2database:h2")
 
     // Spring Security
     implementation("org.springframework.boot:spring-boot-starter-security")
