@@ -44,6 +44,7 @@ public class FriendController {
             Friend friend = friendService.getFriendById(friendUpdateDto.getFriendEntityId());
             Friend updatedFriend = friendService.updateFriend(friend, friendUpdateDto.getAccessLevel(), friendUpdateDto.getDescription());
             FriendUpdateDto responseDto = new FriendUpdateDto(updatedFriend);
+
             return ResponseEntity.ok(responseDto);
         } catch (FriendException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
