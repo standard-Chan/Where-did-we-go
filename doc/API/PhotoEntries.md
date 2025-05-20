@@ -8,15 +8,14 @@ AWS S3에 사진을 저장하고, 서버에는 사진 메타데이터(설명, �
 
 ## 2. 엔드포인트
 
-| 메서드 | URL                                         | 설명                             |
-|:---|:--------------------------------------------|:-------------------------------|
-| GET | `/api/photo-entries/me`                     | 내 사진 목록 전체 조회                  |
-| POST | `/api/photo-entries`                        | 사진 업로드 및 활동 등록                 |
-| GET | `/api/photo-entries/:id`                    | id로 내 사진/활동 상세 조회              |
-| DELETE | `/api/photo-entries/:id`                    | 내 사진/활동 삭제                     |
-| GET | `/api/s3/presignedUrl`                      | S3 Presigned URL + filename 발급 |
-| GET | `/api/search/photo-entries?`                | 정렬된 사진/활동 조회                   |
-| GET (구현 예정) | `/api/photo-entries/search?lat=...&lng=...` | 자포로 내 사진/활동 조회                 |
+| 메서드 | URL                                      | 설명                             |
+|:---|:-----------------------------------------|:-------------------------------|
+| GET | `/api/photo-entries`                     | 내 사진 목록 전체 조회                  |
+| POST | `/api/photo-entries`                     | 사진 업로드 및 활동 등록                 |
+| GET | `/api/photo-entries/:id`                 | id로 내 사진/활동 상세 조회              |
+| DELETE | `/api/photo-entries/:id`                 | 내 사진/활동 삭제                     |
+| GET | `/api/s3/presignedUrl`                   | S3 Presigned URL + filename 발급 |
+| GET | `/api/search/photo-entries?`             | 정렬된 사진/활동 조회                   |
 
 ---
 

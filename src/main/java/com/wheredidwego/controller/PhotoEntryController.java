@@ -42,7 +42,7 @@ public class PhotoEntryController {
     }
 
     // 해당 id의 photo entry 반환
-    @GetMapping()
+    @GetMapping("/{id}")
     public ResponseEntity<?> getPhotoEntryById(@PathVariable("id") Long id) {
 
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
@@ -53,22 +53,39 @@ public class PhotoEntryController {
     }
 
     // photo entry list 반환
-    @GetMapping("/me")
+    @GetMapping("")
     public ResponseEntity<?> getMyPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
-
+        List<PhotoEntryResponseDto> responseDtos;
+        long start = System.currentTimeMillis();
         // 해당 User 검색
         User user = userService.findUserByEmail(userDetails.getUsername());
         List<PhotoEntry> photoEntries = photoEntryRepository.findAllByUser(user);
 
+        long m = System.currentTimeMillis();
+        System.out.println("DB query 소요 시간 : " + (m - start) + "ms");
 
         // 해당 User의 Photo entry 목록을 dto에 저장
-        List<PhotoEntryResponseDto> responseDtos = photoEntries
-                .stream()
-                .map(photoEntry -> {
-                    PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                    responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
-                    return responseDto;
-                }).toList();
+        // 데이터가 적을 경우 직렬처리
+        if (photoEntries.size() < 1000) {
+            responseDtos = photoEntries
+                    .stream()
+                    .map(photoEntry -> {
+                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
+                        return responseDto;
+                    }).toList();
+        } else { // 데이터가 많을 경우 병렬처리
+            responseDtos = photoEntries
+                    .parallelStream()
+                    .map(photoEntry -> {
+                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
+                        return responseDto;
+                    }).toList();
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println("stream 소요 시간 : " + (end - m) + "ms");
 
         return ResponseEntity.ok().body(responseDtos);
     }
