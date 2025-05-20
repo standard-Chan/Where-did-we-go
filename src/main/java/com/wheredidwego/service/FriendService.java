@@ -51,13 +51,13 @@ public class FriendService {
                 .stream().filter((f) -> {
                     System.out.println("user - friends : " + f.getFriend().getId());
                     return f.getFriend().getId() == friendUser.getId();})
-                .findFirst().orElseThrow(() -> new EntityNotFoundException("해당 친구관계가 존재하지 않습니다."));
+                .findFirst().orElseThrow(() -> new FriendException("해당 유저와 친구관계가 아닙니다."));
         // 친구 -> 나
         Friend friendOf = friendUser.getFriends()
                 .stream().filter((f) -> {
                     System.out.println("friend - user : " + f.getFriend().getId());
                         return f.getFriend().getId() == user.getId();})
-                .findFirst().orElseThrow(() -> new EntityNotFoundException("해당 친구관계가 존재하지 않습니다."));
+                .findFirst().orElseThrow(() -> new FriendException("해당 유저와 친구관계가 아닙니다."));
 
 
         if (friend.getUser() != user) {

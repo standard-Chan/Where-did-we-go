@@ -1,4 +1,3 @@
-@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdGFycDMyMUBuYXZlci5jb20iLCJpYXQiOjE3NDc3MjYxMzIsImV4cCI6MTc0NzcyOTczMn0.DJjJnEDFrnl-mRvY06OpItMaMzN7eqd9EWKO9VrRlcM
 
 ### 사진 가져오기
 GET http://localhost:8080/api/photo-entries/all

@@ -26,44 +26,33 @@ public class FriendController {
     @GetMapping()
     public ResponseEntity<?> getFriends(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        try {
-            User user = userService.findUserByEmail(userDetails.getUsername());
-            Set<Friend> friends = friendService.getFriendsSetByUser(user);
-            List<FriendResponseDto> response = friends.stream().map(FriendResponseDto::new).toList();
-            return ResponseEntity.ok().body(response);
-        } catch (FriendException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        Set<Friend> friends = friendService.getFriendsSetByUser(user);
+        List<FriendResponseDto> response = friends.stream().map(FriendResponseDto::new).toList();
+        return ResponseEntity.ok().body(response);
     }
 
     @PutMapping()
     public ResponseEntity<?> updateFriendInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
                                               @RequestBody FriendUpdateDto friendUpdateDto) {
-        try {
-            Friend friend = friendService.getFriendById(friendUpdateDto.getFriendEntityId());
-            Friend updatedFriend = friendService.updateFriend(friend, friendUpdateDto.getAccessLevel(), friendUpdateDto.getDescription());
-            FriendUpdateDto responseDto = new FriendUpdateDto(updatedFriend);
 
-            return ResponseEntity.ok(responseDto);
-        } catch (FriendException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        Friend friend = friendService.getFriendById(friendUpdateDto.getFriendEntityId());
+        Friend updatedFriend = friendService.updateFriend(friend, friendUpdateDto.getAccessLevel(), friendUpdateDto.getDescription());
+        FriendUpdateDto responseDto = new FriendUpdateDto(updatedFriend);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{friendEmail}")
     public ResponseEntity<?> deleteFriend(@PathVariable("friendEmail") String friendEmail,
                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
-        try {
-            User user = userService.findUserByEmail(userDetails.getUsername());
-            User friendUser = userService.findUserByEmail(friendEmail);
 
-            friendService.deleteFriend(user, friendUser);
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        User friendUser = userService.findUserByEmail(friendEmail);
 
-            return ResponseEntity.ok().build();
-        } catch (FriendException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        friendService.deleteFriend(user, friendUser);
+
+        return ResponseEntity.ok().build();
     }
 
 }
