@@ -53,11 +53,30 @@ public class PhotoEntryController {
     }
 
     // photo entry list 반환
-    @GetMapping("")
-    public ResponseEntity<?> getMyPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<PhotoEntryResponseDto> responseDtos;
+    @GetMapping()
+    public ResponseEntity<?> getMyPhotoEntries(@RequestParam(value = "swLat", defaultValue = "takenAt")double swLat,
+                                               @RequestParam(value = "swLng", defaultValue = "desc")double swLng,
+                                               @RequestParam(value = "neLat", defaultValue = "0")double neLat,
+                                               @RequestParam(value = "neLng", defaultValue = "10")double neLng,
+                                               @RequestParam(value = "level", defaultValue = "5")int level,
+                                               @RequestParam(value = "page", defaultValue = "0")int page,
+                                               @RequestParam(value = "size", defaultValue = "500")int size,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        List<PhotoEntry> photoEntries = photoEntryService.getPhotoEntriesInBounds(user, swLat, swLng, neLat, neLng);
+
+        List<PhotoEntryResponseDto> response = photoEntryService.wrappingPhotoEntry2Response(photoEntries);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
         long start = System.currentTimeMillis();
-        // 해당 User 검색
+
+        // 해당 User의 사진 정보 가져오기
         User user = userService.findUserByEmail(userDetails.getUsername());
         List<PhotoEntry> photoEntries = photoEntryRepository.findAllByUser(user);
 
@@ -65,24 +84,7 @@ public class PhotoEntryController {
         System.out.println("DB query 소요 시간 : " + (m - start) + "ms");
 
         // 해당 User의 Photo entry 목록을 dto에 저장
-        // 데이터가 적을 경우 직렬처리
-        if (photoEntries.size() < 1000) {
-            responseDtos = photoEntries
-                    .stream()
-                    .map(photoEntry -> {
-                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
-                        return responseDto;
-                    }).toList();
-        } else { // 데이터가 많을 경우 병렬처리
-            responseDtos = photoEntries
-                    .parallelStream()
-                    .map(photoEntry -> {
-                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
-                        return responseDto;
-                    }).toList();
-        }
+        List<PhotoEntryResponseDto> responseDtos = photoEntryService.wrappingPhotoEntry2Response(photoEntries);
 
         long end = System.currentTimeMillis();
         System.out.println("stream 소요 시간 : " + (end - m) + "ms");

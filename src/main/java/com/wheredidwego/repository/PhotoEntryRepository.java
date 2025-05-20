@@ -19,5 +19,15 @@ public interface PhotoEntryRepository extends JpaRepository<PhotoEntry, Long> {
     @Query("SELECT p FROM PhotoEntry p JOIN FETCH p.region WHERE p.user = :user")
     List<PhotoEntry> findAllByUser(@Param("user") User user);
 
+    @Query("SELECT p FROM PhotoEntry p JOIN FETCH p.region r " +
+            "WHERE p.user = :user " +
+            "AND r.lat BETWEEN :swLat AND :neLat " +
+            "AND r.lng BETWEEN :swLng AND :neLng")
+    List<PhotoEntry> findAllInBounds(@Param("user") User user,
+                                     @Param("swLat") Double swLat,
+                                     @Param("neLat") Double neLat,
+                                     @Param("swLng") Double swLng,
+                                     @Param("neLng") Double neLng);
+
     Page<PhotoEntry> findAllByUser(User user, Pageable pageable);
 }

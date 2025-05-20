@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 public class S3Service {
 
     private final AwsS3Util awsS3Util;
-    private final PhotoEntryService photoEntryService;
 
     /**
      * S3에 이미지를 업로드 하는 PresignedUrl 발급 메서드

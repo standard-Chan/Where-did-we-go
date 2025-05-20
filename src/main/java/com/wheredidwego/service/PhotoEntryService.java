@@ -3,6 +3,7 @@ package com.wheredidwego.service;
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.Region;
 import com.wheredidwego.domain.User;
+import com.wheredidwego.dto.PhotoEntryResponseDto;
 import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
 import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
 import com.wheredidwego.exception.PhotoEntryException;
@@ -11,7 +12,6 @@ import com.wheredidwego.util.awsS3.AwsS3Util;
 import com.wheredidwego.util.lib.DateUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -28,6 +28,7 @@ public class PhotoEntryService {
     private final RegionService regionService;
     private final PhotoEntryRepository photoEntryRepository;
     private final AwsS3Util awsS3Util;
+    private final S3Service s3Service;
 
     public PhotoEntry getPhotoEntryById(Long id) {
         return photoEntryRepository.getPhotoEntriesById(id)
@@ -55,6 +56,19 @@ public class PhotoEntryService {
                 .build();
 
         return photoEntryRepository.save(entry);
+    }
+
+    /**
+     * 좌표 범위의 사진 데이터를 가져온다
+     * @param user 데이터를 얻을 유저
+     * @param swLat 남서 위도 좌표
+     * @param swLng 남서 경도 좌표
+     * @param neLat 북동 위도 좌표
+     * @param neLng 북동 경도 좌표
+     * @return List photoEntry
+     */
+    public List<PhotoEntry> getPhotoEntriesInBounds(User user, double swLat, double swLng, double neLat, double neLng) {
+        return photoEntryRepository.findAllInBounds(user, swLat, neLat, swLng, neLng);
     }
 
     public List<PhotoEntry> getAllPhotoEntriesByUser(User user) {
@@ -110,6 +124,32 @@ public class PhotoEntryService {
         }
 
         return photoEntryRepository.save(photoEntry);
+    }
+
+    public List<PhotoEntryResponseDto> wrappingPhotoEntry2Response (List<PhotoEntry> photoEntries) {
+
+        List<PhotoEntryResponseDto> responseDtos;
+
+        // 데이터가 적을 경우 직렬처리
+        if (photoEntries.size() < 100) {
+            responseDtos = photoEntries
+                    .stream()
+                    .map(photoEntry -> {
+                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
+                        return responseDto;
+                    }).toList();
+        } else { // 데이터가 많을 경우 병렬처리
+            responseDtos = photoEntries
+                    .parallelStream()
+                    .map(photoEntry -> {
+                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
+                        return responseDto;
+                    }).toList();
+        }
+
+        return responseDtos;
     }
 
 }
