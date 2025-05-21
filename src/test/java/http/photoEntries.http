@@ -1,3 +1,4 @@
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdGFycDMyMUBuYXZlci5jb20iLCJpYXQiOjE3NDc3MjkyMTIsImV4cCI6MTc0NzczMjgxMn0.dIt6maPY0_2tgNwHnw7Jk3XasRldZsNZ5cPdhtswThA
 
 ### 사진 가져오기
 GET http://localhost:8080/api/photo-entries/all
@@ -11,6 +12,6 @@ Authorization: Bearer {{token}}}
 Content-Type: application/json
 
 ### 범위 내의 사진 가져오기
-GET http://localhost:8080/api/photo-entries?swLat=36&neLat=37&swLng=127&neLng=128
+GET http://localhost:8080/api/photo-entries?swLat=37.4453022&swLng=126.9158586&neLat=37.6875009&neLng=127.0401414&level=12
 Authorization: Bearer {{token}}}
 Content-Type: application/json

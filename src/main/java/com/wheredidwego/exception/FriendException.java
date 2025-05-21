@@ -4,9 +4,11 @@ import lombok.Getter;
 
 @Getter
 public class FriendException extends RuntimeException {
-    private final ErrorCode errorCode = ErrorCode.FRIEND_NOT_FOUND;
+    private final ErrorCode errorCode;
 
-    public FriendException(String message) {
-        super(message);
+    public FriendException(ErrorCode errorCode) {
+        super(errorCode.getErrorMessage());
+        this.errorCode = errorCode;
     }
+
 }

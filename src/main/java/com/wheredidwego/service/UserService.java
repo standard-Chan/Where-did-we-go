@@ -2,6 +2,7 @@ package com.wheredidwego.service;
 
 import com.wheredidwego.dto.UserResponseDto;
 import com.wheredidwego.domain.User;
+import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.util.UserValidator;
@@ -34,7 +35,7 @@ public class UserService {
 
     public User findUserByEmail(String email) {
         return userRepository.findUserByEmail(email)
-                .orElseThrow(()-> new FriendException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(()-> new FriendException(ErrorCode.USER_NOT_FOUND));
     }
 
     public User findUserById(Long id) {

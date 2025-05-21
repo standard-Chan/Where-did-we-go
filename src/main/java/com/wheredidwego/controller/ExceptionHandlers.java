@@ -2,6 +2,7 @@ package com.wheredidwego.controller;
 
 import com.wheredidwego.dto.ErrorResponse;
 import com.wheredidwego.exception.FriendException;
+import com.wheredidwego.exception.FriendRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,5 +19,4 @@ public class ExceptionHandlers {
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
-
 }

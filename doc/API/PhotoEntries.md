@@ -8,14 +8,15 @@ AWS S3에 사진을 저장하고, 서버에는 사진 메타데이터(설명, �
 
 ## 2. 엔드포인트
 
-| 메서드 | URL                                      | 설명                             |
-|:---|:-----------------------------------------|:-------------------------------|
-| GET | `/api/photo-entries`                     | 내 사진 목록 전체 조회                  |
-| POST | `/api/photo-entries`                     | 사진 업로드 및 활동 등록                 |
-| GET | `/api/photo-entries/:id`                 | id로 내 사진/활동 상세 조회              |
-| DELETE | `/api/photo-entries/:id`                 | 내 사진/활동 삭제                     |
-| GET | `/api/s3/presignedUrl`                   | S3 Presigned URL + filename 발급 |
-| GET | `/api/search/photo-entries?`             | 정렬된 사진/활동 조회                   |
+| 메서드 | URL                          | 설명                             |
+|:---|:-----------------------------|:-------------------------------|
+| GET | `/api/photo-entries/all`     | 내 사진 목록 전체 조회                  |
+| GET | `/api/photo-entries`         | 좌표 범위 내 사진 조회                  |
+| POST | `/api/photo-entries`         | 사진 업로드 및 활동 등록                 |
+| GET | `/api/photo-entries/:id`     | id로 내 사진/활동 상세 조회              |
+| DELETE | `/api/photo-entries/:id`     | 내 사진/활동 삭제                     |
+| GET | `/api/s3/presignedUrl`       | S3 Presigned URL + filename 발급 |
+| GET | `/api/search/photo-entries?` | 정렬된 사진/활동 조회                   |
 
 ---
 
@@ -75,9 +76,35 @@ AWS S3에 사진을 저장하고, 서버에는 사진 메타데이터(설명, �
     - 파일명은 4-1에서 response로 받은 filename을 사용해야합니다.
 ---
 
-### 4-3. 내 사진 목록 조회
+### 4-3. 좌표 범위 내의 사진 조회
+- **URL**: `GET /api/photo-entries`
+- 쿼리 파라미터
+  - swLat :	없음	남서쪽 위도
+  - swLng : 남서쪽 경도
+  - neLat : 북동쪽 위도
+  - neLng : 북동쪽 경도
+- 
+- **응답 예시**:
+```json
+[
+  {
+    "id": 1,
+    "photoUrl": "https://s3.amazonaws.com/photos/123.jpg",
+    "description": "제주 바다",
+    "takenAt": "2024-05-06",
+    "lat": 33.450701,
+    "lng": 126.570667,
+    "province": "제주특별자치도",
+    "district": "제주시",
+    "subdistrict": "구좌읍"
+  },
+  ...
+]
+```
 
-- **URL**: `GET /api/photo-entries/me`
+### 4-4. 내 사진 전체 조회
+
+- **URL**: `GET /api/photo-entries/all`
 - **응답 예시**:
     ```json
     [
@@ -195,13 +222,6 @@ GET /api/search/photo-entries?sort=takenAt&drection=asc&page=10&size=10
     - 사용자 자신의 데이터에 대해서만 페이징 조회됩니다.
     - 정렬 필드는 유효한 컬럼 값이어야 합니다.
 
-### 4-7. 자포 기반 사진/활동 조회 (구현 예정)
-
-- **URL**: `GET /api/search/photo-entries?lat=...&lng=...`
-- **설명**: 주어진 좌표의 근처에 담겨진 사진/활동 기록 조회
-- **상태**: 구현 예정
-
----
 
 ## 5. 응답 코드 정보
 

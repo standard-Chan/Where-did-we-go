@@ -3,6 +3,7 @@ package com.wheredidwego.service;
 import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.enumerate.FriendAccessLevel;
 import com.wheredidwego.domain.User;
+import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.repository.FriendRepository;
 import com.wheredidwego.repository.UserRepository;
@@ -29,7 +30,7 @@ public class FriendService {
 
     public Friend getFriendById(Long friendEntityId) {
         return friendRepository.getFriendsById(friendEntityId)
-                .orElseThrow(()-> new FriendException("친구 관계가 존재하지 않습니다."));
+                .orElseThrow(()-> new FriendException(ErrorCode.FRIEND_NOT_FOUND));
     }
 
     public Friend updateFriend(Friend friend, FriendAccessLevel accessLevel, String description) {
@@ -51,17 +52,17 @@ public class FriendService {
                 .stream().filter((f) -> {
                     System.out.println("user - friends : " + f.getFriend().getId());
                     return f.getFriend().getId() == friendUser.getId();})
-                .findFirst().orElseThrow(() -> new FriendException("해당 유저와 친구관계가 아닙니다."));
+                .findFirst().orElseThrow(() -> new FriendException(ErrorCode.IS_NOT_FRIEND));
         // 친구 -> 나
         Friend friendOf = friendUser.getFriends()
                 .stream().filter((f) -> {
                     System.out.println("friend - user : " + f.getFriend().getId());
                         return f.getFriend().getId() == user.getId();})
-                .findFirst().orElseThrow(() -> new FriendException("해당 유저와 친구관계가 아닙니다."));
+                .findFirst().orElseThrow(() -> new FriendException(ErrorCode.IS_NOT_FRIEND));
 
 
         if (friend.getUser() != user) {
-            throw new FriendException("삭제 권한이 없습니다.");
+            throw new FriendException(ErrorCode.NOT_PERMISSION);
         }
 
         // 단방향의 2개 친구관계 모두 제거
