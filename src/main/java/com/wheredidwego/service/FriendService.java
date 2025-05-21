@@ -7,7 +7,6 @@ import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.repository.FriendRepository;
 import com.wheredidwego.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,12 @@ public class FriendService {
     // 해당 유저의 친구 목록 조회
     public Set<Friend> getFriendsSetByUser(User user) {
         return user.getFriends();
+    }
+
+    // 친구 조회
+    public Friend getFriendByUserAndFriend(User user, User friend) {
+        return friendRepository.findFriendByUserAndFriend(user, friend)
+                .orElseThrow(() -> new FriendException(ErrorCode.FRIEND_NOT_FOUND));
     }
 
     public Friend getFriendById(Long friendEntityId) {
@@ -62,7 +67,7 @@ public class FriendService {
 
 
         if (friend.getUser() != user) {
-            throw new FriendException(ErrorCode.NOT_PERMISSION);
+            throw new FriendException(ErrorCode.NOT_PERMISSION_TO_DELETE);
         }
 
         // 단방향의 2개 친구관계 모두 제거

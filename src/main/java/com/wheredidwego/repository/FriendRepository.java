@@ -20,4 +20,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     void deleteByUserAndFriend(User user, User friend);
 
     Optional<Friend> getFriendsById(Long id);
+
+    Optional<Friend> findFriendByUserAndFriend(User user, User friend);
 }

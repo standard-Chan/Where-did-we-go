@@ -35,4 +35,21 @@ public class PhotoEntryResponseDto {
         this.district = region.getDistrict();
         this.subdistrict = region.getSubdistrict();
     }
+
+    /**
+     * Region 정보만 담은 photo entry Response 생성. for ONLY_LOCATION_VIEW 권한인 친구 정보 조회
+     * @param photoEntry
+     */
+    public void setPhotoEntryResponseDtoForRegion(PhotoEntry photoEntry) {
+        this.id = photoEntry.getId();
+        this.description = "false";
+        this.takenAt = "false";
+
+        Region region = photoEntry.getRegion();
+        this.lat = photoEntry.getRegion().getLat();
+        this.lng = photoEntry.getRegion().getLng();
+        this.province = region.getProvince();
+        this.district = region.getDistrict();
+        this.subdistrict = region.getSubdistrict();
+    }
 }

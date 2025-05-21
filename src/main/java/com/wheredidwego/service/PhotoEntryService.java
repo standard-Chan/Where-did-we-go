@@ -1,11 +1,14 @@
 package com.wheredidwego.service;
 
+import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.Region;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.PhotoEntryResponseDto;
 import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
 import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
+import com.wheredidwego.exception.ErrorCode;
+import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.exception.PhotoEntryException;
 import com.wheredidwego.repository.PhotoEntryRepository;
 import com.wheredidwego.util.awsS3.AwsS3Util;
@@ -29,6 +32,7 @@ public class PhotoEntryService {
     private final PhotoEntryRepository photoEntryRepository;
     private final AwsS3Util awsS3Util;
     private final S3Service s3Service;
+    private final FriendService friendService;
 
     public PhotoEntry getPhotoEntryById(Long id) {
         return photoEntryRepository.getPhotoEntriesById(id)
@@ -126,10 +130,14 @@ public class PhotoEntryService {
         return photoEntryRepository.save(photoEntry);
     }
 
+    /**
+     * photoEntry list를 responseDTO list로 변환
+     * @param photoEntries
+     * @return
+     */
     public List<PhotoEntryResponseDto> wrappingPhotoEntry2Response (List<PhotoEntry> photoEntries) {
 
         List<PhotoEntryResponseDto> responseDtos;
-
         // 데이터가 적을 경우 직렬처리
         if (photoEntries.size() < 100) {
             responseDtos = photoEntries
@@ -150,6 +158,67 @@ public class PhotoEntryService {
         }
 
         return responseDtos;
+    }
+
+    /**
+     * photoEntry list를 Region 정보만 담은 responseDTO list로 변환
+     * @param photoEntries
+     * @return
+     */
+    public List<PhotoEntryResponseDto> wrappingPhotoEntry2ResponseOnlyRegion (List<PhotoEntry> photoEntries) {
+
+        List<PhotoEntryResponseDto> responseDtos;
+        // 데이터가 적을 경우 직렬처리
+        if (photoEntries.size() < 100) {
+            responseDtos = photoEntries
+                    .stream()
+                    .map(photoEntry -> {
+                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto();
+                        responseDto.setPhotoEntryResponseDtoForRegion(photoEntry);
+                        responseDto.setPhotoUrl("false");
+                        return responseDto;
+                    }).toList();
+        } else { // 데이터가 많을 경우 병렬처리
+            responseDtos = photoEntries
+                    .parallelStream()
+                    .map(photoEntry -> {
+                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto();
+                        responseDto.setPhotoEntryResponseDtoForRegion(photoEntry);
+                        responseDto.setPhotoUrl("false");
+                        return responseDto;
+                    }).toList();
+        }
+
+        return responseDtos;
+    }
+
+
+    public List<PhotoEntryResponseDto> getFriendsPhotoEntries(User user, User friendUser, double swLat, double swLng, double neLat, double neLng) {
+        List<PhotoEntry> photoEntries;
+        List<PhotoEntryResponseDto> photoEntryResponseDtos;
+        Friend relationship = friendService.getFriendByUserAndFriend(user, friendUser);
+        switch (relationship.getAccessLevel()) {
+            case NONE -> {
+                throw new FriendException(ErrorCode.NOT_PERMISSION_TO_VIEW);
+            }
+            case LOCATION_ONLY -> {
+                photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
+                photoEntryResponseDtos = wrappingPhotoEntry2ResponseOnlyRegion(photoEntries);
+            }
+            case VIEW_DETAIL -> {
+                photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
+                photoEntryResponseDtos = wrappingPhotoEntry2Response(photoEntries);
+            }
+            case FULL_ACCESS -> {
+                photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
+                photoEntryResponseDtos = wrappingPhotoEntry2Response(photoEntries);
+                // 추후 구현
+            }
+            default -> {
+                throw new FriendException(ErrorCode.INCORRECT_PERMISSION);
+            }
+        }
+        return photoEntryResponseDtos;
     }
 
 }

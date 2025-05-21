@@ -111,4 +111,22 @@ public class PhotoEntryController {
 
         return ResponseEntity.status(200).body(responseDto);
     }
+
+    @GetMapping("/friends/{friend}")
+    public ResponseEntity<?> getFriendsPhotoEntries(@PathVariable("friend")String friendEmail,
+                                                    @RequestParam(value = "swLat", defaultValue = "takenAt")double swLat,
+                                                    @RequestParam(value = "swLng", defaultValue = "desc")double swLng,
+                                                    @RequestParam(value = "neLat", defaultValue = "0")double neLat,
+                                                    @RequestParam(value = "neLng", defaultValue = "10")double neLng,
+                                                    @RequestParam(value = "level", defaultValue = "5")int level,
+                                                    @RequestParam(value = "page", defaultValue = "0")int page,
+                                                    @RequestParam(value = "size", defaultValue = "500")int size,
+                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        User friend = userService.findUserByEmail(friendEmail);
+
+        // 친구 photo entry 얻기
+        List<PhotoEntryResponseDto> response = photoEntryService.getFriendsPhotoEntries(user, friend, swLat, swLng, neLat, neLng);
+        return ResponseEntity.ok().body(response);
+    }
 }
