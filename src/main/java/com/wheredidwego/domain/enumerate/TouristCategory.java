@@ -15,17 +15,13 @@ public enum TouristCategory {
     WATERFALL_VALLEY("60504", "폭포/계곡"),
     HOT_SPRING("60505", "온천지역"),
     CAMPING_SITE("60506", "야영장"),
-
     THEME_PARK("60507", "테마공원/대형놀이공원"),
     GENERAL_PARK("60508", "일반유원지/일반놀이공원"),
-
     AQUARIUM("60509", "아쿠아리움/대형수족관"),
     ZOO("60510", "동물원"),
     BOTANIC_GARDEN("60511", "식물원"),
-
     GENERAL_SPOT("60513", "일반관광지"),
     POPULAR_SPOT("60514", "유명관광지"),
-
     DRAMA_MOVIE_SITE("60515", "드라마/영화촬영지"),
     HERB_FARM("60516", "관광농원/허브마을"),
     //FOOD_FASHION_STREET("60517", "먹거리/패션거리"),
@@ -38,6 +34,7 @@ public enum TouristCategory {
     JAMPING_HOLIDAY("60525", "잼핑홀리데이(캠핑)"),
     GLAMPING_KOREA("60526", "글램핑코리아(캠핑)"),
 
+    // 역사 관련
     PALACE("60601", "궁궐/종묘"),
     ROYAL_TOMB("60602", "왕릉/고분"),
     HISTORIC_SITE("60603", "유명사적/유적지"),
