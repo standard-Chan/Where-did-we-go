@@ -5,6 +5,7 @@ import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.PhotoEntryResponseDto;
 import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
 import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
+import com.wheredidwego.dto.ProvincePhotoCountResponse;
 import com.wheredidwego.repository.PhotoEntryRepository;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.PhotoEntryService;
@@ -13,6 +14,7 @@ import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -129,6 +131,13 @@ public class PhotoEntryController {
 
         // 친구 photo entry 얻기
         List<PhotoEntryResponseDto> response = photoEntryService.getFriendsPhotoEntries(user, friend, swLat, swLng, neLat, neLng);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/photo-entries/by-province")
+    public ResponseEntity<?> getPhotoEntriesByProvince(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userService.findUserByEmail(userDetails.getUsername());
+        List<ProvincePhotoCountResponse> response = photoEntryService.getPhotoCountByProvince(user);
         return ResponseEntity.ok().body(response);
     }
 }

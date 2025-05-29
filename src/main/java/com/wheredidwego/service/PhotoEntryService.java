@@ -7,6 +7,7 @@ import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.PhotoEntryResponseDto;
 import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
 import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
+import com.wheredidwego.dto.ProvincePhotoCountResponse;
 import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.exception.PhotoEntryException;
@@ -197,7 +198,10 @@ public class PhotoEntryService {
         return responseDtos;
     }
 
-
+    /**
+     * 권한에 따른 친구의 사진 저장 정보를 반환
+     * @return
+     */
     public List<PhotoEntryResponseDto> getFriendsPhotoEntries(User user, User friendUser, double swLat, double swLng, double neLat, double neLng) {
         List<PhotoEntry> photoEntries;
         List<PhotoEntryResponseDto> photoEntryResponseDtos;
@@ -226,4 +230,10 @@ public class PhotoEntryService {
         return photoEntryResponseDtos;
     }
 
+    /**
+     * user의 photo entry의 province별 집계 List 반환
+     */
+    public List<ProvincePhotoCountResponse> getPhotoCountByProvince(User user) {
+        return photoEntryRepository.findPhotoEntriesCountsPerProvince(user);
+    }
 }

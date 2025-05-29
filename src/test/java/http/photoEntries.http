@@ -19,3 +19,8 @@ Content-Type: application/json
 GET http://localhost:8080/api/photo-entries/friends/starp321@naver.com?swLat=37.4453022&swLng=126.9158586&neLat=37.6875009&neLng=127.0401414&level=12
 Authorization: Bearer {{token}}
 Content-Type: application/json
+
+### 집계 데이터 가져오기
+GET http://localhost:8080/api/photo-entries/photo-entries/by-province
+Authorization: Bearer {{token}}
+Content-Type: application/json

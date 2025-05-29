@@ -222,6 +222,31 @@ GET /api/search/photo-entries?sort=takenAt&drection=asc&page=10&size=10
     - 사용자 자신의 데이터에 대해서만 페이징 조회됩니다.
     - 정렬 필드는 유효한 컬럼 값이어야 합니다.
 
+### 4-8. 지역별 사진 개수 집계
+
+- **URL**: `GET /api/photo-entries/by-province`
+
+- **응답**
+``` json
+    [
+        {
+            "province": "서울특별시",
+            "count": 12
+        },
+        {
+            "province": "경기도",
+            "count": 8
+        },
+        {
+            "province": "부산광역시",
+            "count": 3
+        }
+    ]
+```
+
+- **참고**
+    - 로그인한 사용자(@AuthenticationPrincipal)의 photo-entry를 지역별(province)로 집계하여 응답합니다.
+    - province 값은 Region Entity의 province 필드를 기준으로 그룹화됩니다.
 
 ## 5. 응답 코드 정보
 
