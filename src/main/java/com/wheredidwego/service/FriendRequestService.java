@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,43 +28,27 @@ public class FriendRequestService {
     private final UserService userService;
 
     /**
-     * 중간 역할 (도메인 객체 변환 + 내부 로직 호출)
-     * @param userDetails sender
-     * @param receiverEmail 친구요청을 받는 사람 이메일
-     * @return
-     */
-    public FriendRequest handleRequest(UserDetails userDetails, String receiverEmail) {
-        User sender = userService.findUserByEmail(userDetails.getUsername());
-        User receiver = userService.findUserByEmail(receiverEmail);
-
-        return createFriendRequest(sender, receiver);
-    }
-    /**
      * 친구 요청 생성
      * @param sender 요청자
      * @param receiver
      * @return  생성된 친구 요청 정보
      */
     public FriendRequest createFriendRequest(User sender, User receiver) {
-        // 예외 처리
-        // 해당 user와 이미 친구일 경우
+
         if (friendRepository.existsFriendByUserAndFriend(sender, receiver)) {
-            throw new FriendRequestException(ErrorCode.ALREADY_FRIEND);
+            throw new FriendRequestException(ErrorCode.ALREADY_FRIEND); // 이미 친구인 경우
         }
 
-        // 해당 친구 요청을 이미 보낸 경우 (보류된 경우)
         if (friendRequestRepository.existsFriendRequestBySenderAndReceiverAndStatus(sender, receiver, RequestStatus.PENDING)) {
-            throw new FriendRequestException(ErrorCode.REQUEST_ALREADY_SENT);
+            throw new FriendRequestException(ErrorCode.REQUEST_ALREADY_SENT); // 이미 친구 요청을 보낸 경우
         }
 
         FriendRequest friendRequest = new FriendRequest(sender, receiver);
         return friendRequestRepository.save(friendRequest);
     }
 
-    /**
-     * 받은 친구 요청 전송 목록 조회
-     */
-    public List<FriendRequest> getReceivedRequest(User user) {
+    /** 받은 친구 요청 전송 목록 조회 */
+    public List<FriendRequest> searchReceivedRequest(User user) {
         return friendRequestRepository.findFriendRequestsByReceiverAndStatus(user, RequestStatus.PENDING);
     }
 
@@ -82,25 +68,20 @@ public class FriendRequestService {
         User requestReceiver = userService.findUserByEmail(userDetails.getUsername());
 
         // 요청 수락자와 현재 로그인한 유저가 동일한 지 검사
-        if (! (requestReceiver == friendRequest.getReceiver())) {
+        if (!requestReceiver.equals(friendRequest.getReceiver())) {
             throw new FriendRequestException(ErrorCode.NO_PERMISSION_TO_DECIDE);
         }
 
-        // 수락 시
-        if (status == RequestStatus.ACCEPTED) {
-            return acceptFriendRequest(friendRequest);
-        }
-        // 거절 시
-        else if (status == RequestStatus.REJECTED) {
-            return rejectFriendRequest(friendRequest);
-        } else {
-            throw new FriendRequestException(ErrorCode.INVALID_STATUS);
+        switch (status) {
+            case ACCEPTED -> { return acceptFriendRequest(friendRequest); }
+            case REJECTED -> { return rejectFriendRequest(friendRequest); }
+            default -> { throw new FriendRequestException(ErrorCode.INVALID_STATUS); }
         }
     }
 
     /**
      * 친구 요청 수락.
-     * 단방향 Frined Entity 2개 생성하고, FriendReuqest의 status를 ACCEPTED롤 변경한다.
+     * 단방향 관계 Friend. 엔티티를 양방향으로 두 개 생성 (User → Friend → User 구조)
      * @param friendRequest 친구 요청 정보
      * @return
      */
@@ -137,4 +118,10 @@ public class FriendRequestService {
         return friendRequest;
     }
 
+    /** entity를 dto로 변환*/
+    public <T> List<T> mapFriendRequestsToDto(List<FriendRequest> friendRequests, Function<FriendRequest, T> mapper) {
+        return friendRequests.stream()
+                .map(mapper)
+                .collect(Collectors.toList());
+    }
 }
