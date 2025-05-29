@@ -1,7 +1,13 @@
 package com.wheredidwego.exception;
 
+import lombok.Getter;
+
 public class AppException extends RuntimeException {
-  public AppException(String message) {
-    super(message);
-  }
+    @Getter
+    private final ErrorCode errorCode;
+
+    public AppException(ErrorCode errorCode) {
+        super(errorCode.getErrorMessage());
+        this.errorCode = errorCode;
+    }
 }

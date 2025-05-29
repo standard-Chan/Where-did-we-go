@@ -1,7 +1,7 @@
 package com.wheredidwego.exception;
 
-public class PhotoEntryException extends RuntimeException {
-    public PhotoEntryException(String message) {
-        super(message);
+public class PhotoEntryException extends AppException {
+    public PhotoEntryException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
