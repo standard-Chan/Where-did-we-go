@@ -7,6 +7,7 @@ import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
 import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
 import com.wheredidwego.dto.ProvincePhotoCountResponse;
 import com.wheredidwego.security.details.CustomUserDetails;
+import com.wheredidwego.service.PhotoEntryMapper;
 import com.wheredidwego.service.PhotoEntryService;
 import com.wheredidwego.service.S3Service;
 import com.wheredidwego.service.UserService;
@@ -25,6 +26,7 @@ public class PhotoEntryController {
     private final PhotoEntryService photoEntryService;
     private final UserService userService;
     private final S3Service s3Service;
+    private final PhotoEntryMapper photoEntryMapper;
 
     @PostMapping()
     public ResponseEntity<PhotoEntryResponseDto> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadRequestDto dto,
@@ -57,7 +59,7 @@ public class PhotoEntryController {
 
         User user = userService.findUserByUserDetails(userDetails);
         List<PhotoEntry> photoEntries = photoEntryService.getPhotoEntriesInBounds(user, swLat, swLng, neLat, neLng);
-        List<PhotoEntryResponseDto> response = photoEntryService.convertToResponseDtoList(photoEntries);
+        List<PhotoEntryResponseDto> response = photoEntryMapper.mapToDtoList(photoEntries);
 
         return ResponseEntity.ok().body(response);
     }
@@ -98,7 +100,7 @@ public class PhotoEntryController {
     @GetMapping("/statistics/province")
     public ResponseEntity<List<ProvincePhotoCountResponse>> getPhotoStatisticsByProvince(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userService.findUserByUserDetails(userDetails);
-        List<ProvincePhotoCountResponse> response = photoEntryService.getPhotoCountByProvince(user);
+        List<ProvincePhotoCountResponse> response = photoEntryService.getPhotoEntryStatisticsByProvince(user);
         return ResponseEntity.ok().body(response);
     }
 }

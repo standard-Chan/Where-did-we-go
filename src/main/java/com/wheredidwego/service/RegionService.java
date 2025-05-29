@@ -80,7 +80,4 @@ public class RegionService {
         return regionInfo;
     }
 
-    public Region saveRegion(Region region) {
-        return regionRepository.save(region);
-    }
 }

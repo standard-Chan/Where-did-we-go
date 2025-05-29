@@ -16,7 +16,6 @@ import com.wheredidwego.util.awsS3.AwsS3Util;
 import com.wheredidwego.util.lib.DateUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,12 +30,12 @@ public class PhotoEntryService {
     private final RegionService regionService;
     private final PhotoEntryRepository photoEntryRepository;
     private final AwsS3Util awsS3Util;
-    private final S3Service s3Service;
     private final FriendService friendService;
+    private final PhotoEntryMapper photoEntryMapper;
 
     public PhotoEntry getPhotoEntryById(Long id) {
         return photoEntryRepository.getPhotoEntriesById(id)
-                .orElseThrow(() -> new PhotoEntryException("ID-" + id + "의 PhotoEntry가 존재하지 않습니다."));
+                .orElseThrow(() -> new PhotoEntryException(ErrorCode.PHOTO_ENTRY_NOT_FOUND));
     }
 
     /**
@@ -75,18 +74,14 @@ public class PhotoEntryService {
         return photoEntryRepository.findAllInBounds(user, swLat, neLat, swLng, neLng);
     }
 
-    public List<PhotoEntry> getAllPhotoEntriesByUser(User user) {
-        return photoEntryRepository.findAllByUser(user);
-    }
-
-    // id로 삭제
     public void deletePhotoEntryById(Long id, User user) {
         PhotoEntry photoEntry = getPhotoEntryById(id);
 
         // 해당 데이터의 소유 USER와 요청 User가 다른 경우
         if (!photoEntry.getUser().getEmail().equals(user.getEmail())) {
-            throw new AuthorizationDeniedException("삭제 권한이 없습니다.");
+            throw new PhotoEntryException(ErrorCode.NOT_PERMISSION_TO_DELETE);
         }
+
         // s3 이미지 삭제
         String photoPath = photoEntry.getPhotoPath();
         awsS3Util.deleteImage(photoPath);
@@ -119,9 +114,8 @@ public class PhotoEntryService {
             // 기존 region 참조 횟수 감소
             regionService.disconnectRegion(photoEntry.getRegion().getId());
 
-            // 새로운 region 생성 및 저장
-            Region region = new Region(lat, lng, regionService.searchRegion(lat, lng));
-            regionService.saveRegion(region);
+            // 새로운 region 생성 or 저장
+            Region region = regionService.findOrCreateRegion(lat, lng);
 
             // 새로운 region으로 업데이트
             photoEntry.updateRegion(region);
@@ -131,89 +125,25 @@ public class PhotoEntryService {
     }
 
 
-    public PhotoEntryResponseDto convertToResponseDto(PhotoEntry photoEntry) {
-        return new PhotoEntryResponseDto(photoEntry, s3Service);
-    }
-
-    /**
-     * photoEntry list를 responseDTO list로 변환
-     * @param photoEntries
-     * @return
-     */
-    public List<PhotoEntryResponseDto> convertToResponseDtoList(List<PhotoEntry> photoEntries) {
-
-        List<PhotoEntryResponseDto> response;
-        //병렬처리
-        response = photoEntries
-                .parallelStream()
-                .map(photoEntry -> {
-                    PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry, s3Service);
-                    return responseDto;
-                }).toList();
-
-        return response;
-    }
-
-    /**
-     * photoEntry list를 Region 정보만 담은 responseDTO list로 변환. 권한에 따른 제한된 정보를 보여주기 위함.
-     * @param photoEntries
-     * @return
-     */
-    public List<PhotoEntryResponseDto> wrappingPhotoEntry2ResponseOnlyRegion (List<PhotoEntry> photoEntries) {
-
-        List<PhotoEntryResponseDto> responseDtos;
-        // 데이터가 적을 경우 직렬처리
-        if (photoEntries.size() < 100) {
-            responseDtos = photoEntries
-                    .stream()
-                    .map(photoEntry -> {
-                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto();
-                        responseDto.setPhotoEntryResponseDtoForRegion(photoEntry);
-                        responseDto.setPhotoUrl("false");
-                        return responseDto;
-                    }).toList();
-        } else { // 데이터가 많을 경우 병렬처리
-            responseDtos = photoEntries
-                    .parallelStream()
-                    .map(photoEntry -> {
-                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto();
-                        responseDto.setPhotoEntryResponseDtoForRegion(photoEntry);
-                        responseDto.setPhotoUrl("false");
-                        return responseDto;
-                    }).toList();
-        }
-
-        return responseDtos;
-    }
-
     /**
      * 권한에 따른 친구의 사진 저장 정보를 반환
-     * @return
      */
     public List<PhotoEntryResponseDto> getFriendsPhotoEntries(User user, User friendUser, double swLat, double swLng, double neLat, double neLng) {
         List<PhotoEntry> photoEntries;
         List<PhotoEntryResponseDto> photoEntryResponseDtos;
         Friend relationship = friendService.getFriendByUserAndFriend(user, friendUser);
+
         switch (relationship.getAccessLevel()) {
-            case NONE -> {
-                throw new FriendException(ErrorCode.NOT_PERMISSION_TO_VIEW);
-            }
+            case NONE -> throw new FriendException(ErrorCode.NOT_PERMISSION_TO_VIEW);
             case LOCATION_ONLY -> {
                 photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
-                photoEntryResponseDtos = wrappingPhotoEntry2ResponseOnlyRegion(photoEntries);
+                photoEntryResponseDtos = photoEntryMapper.mapToDtoListOnlyRegion(photoEntries);
             }
-            case VIEW_DETAIL -> {
+            case VIEW_DETAIL, FULL_ACCESS -> {
                 photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
-                photoEntryResponseDtos = convertToResponseDtoList(photoEntries);
+                photoEntryResponseDtos = photoEntryMapper.mapToDtoList(photoEntries);
             }
-            case FULL_ACCESS -> {
-                photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
-                photoEntryResponseDtos = convertToResponseDtoList(photoEntries);
-                // 추후 구현
-            }
-            default -> {
-                throw new FriendException(ErrorCode.INCORRECT_PERMISSION);
-            }
+            default -> throw new FriendException(ErrorCode.INCORRECT_PERMISSION);
         }
         return photoEntryResponseDtos;
     }
@@ -221,7 +151,7 @@ public class PhotoEntryService {
     /**
      * user의 photo entry의 province별 집계 List 반환
      */
-    public List<ProvincePhotoCountResponse> getPhotoCountByProvince(User user) {
+    public List<ProvincePhotoCountResponse> getPhotoEntryStatisticsByProvince(User user) {
         return photoEntryRepository.findPhotoEntriesCountsPerProvince(user);
     }
 }
