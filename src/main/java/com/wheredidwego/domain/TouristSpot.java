@@ -1,6 +1,6 @@
 package com.wheredidwego.domain;
 
-import com.wheredidwego.domain.enumerate.TouristCategory;
+import com.wheredidwego.enumerate.TouristCategory;
 import com.wheredidwego.util.TouristCategoryConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

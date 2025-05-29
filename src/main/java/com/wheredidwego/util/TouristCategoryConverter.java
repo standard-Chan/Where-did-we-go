@@ -1,6 +1,6 @@
 package com.wheredidwego.util;
 
-import com.wheredidwego.domain.enumerate.TouristCategory;
+import com.wheredidwego.enumerate.TouristCategory;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
