@@ -1,6 +1,6 @@
 package com.wheredidwego.domain;
 
-import com.wheredidwego.domain.enumerate.FriendAccessLevel;
+import com.wheredidwego.enumerate.FriendAccessLevel;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

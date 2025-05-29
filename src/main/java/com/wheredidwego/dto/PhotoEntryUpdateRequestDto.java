@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PhotoEntryUpdateRequestDto {
-    private Long id;
     private String description;
     private String takenAt; // ISO 표준 : 2024-05-06
     private Double lat;

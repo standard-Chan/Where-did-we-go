@@ -96,9 +96,9 @@ public class PhotoEntryService {
     }
 
     // update
-    public PhotoEntry updatePhotoEntry(PhotoEntryUpdateRequestDto requestDto) {
+    public PhotoEntry updatePhotoEntry(Long id, PhotoEntryUpdateRequestDto requestDto) {
         // photo entry 가져오기
-        PhotoEntry photoEntry = this.getPhotoEntryById(requestDto.getId());
+        PhotoEntry photoEntry = this.getPhotoEntryById(id);
 
         // takenAt 업데이트
         if (!DateUtil.localDateToString(photoEntry.getTakenAt()).equals(requestDto.getTakenAt())) {

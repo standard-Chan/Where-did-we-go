@@ -1,4 +1,4 @@
-package com.wheredidwego.domain.enumerate;
+package com.wheredidwego.enumerate;
 
 public enum RequestStatus {
     PENDING("PENDING"),

@@ -1,4 +1,4 @@
-package com.wheredidwego.domain.enumerate;
+package com.wheredidwego.enumerate;
 
 /**
  * 친구 사이 정보 열람 권한

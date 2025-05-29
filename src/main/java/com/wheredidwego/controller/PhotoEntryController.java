@@ -14,7 +14,6 @@ import com.wheredidwego.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,13 +55,10 @@ public class PhotoEntryController {
 
     // photo entry list 반환
     @GetMapping()
-    public ResponseEntity<?> getMyPhotoEntries(@RequestParam(value = "swLat", defaultValue = "takenAt")double swLat,
-                                               @RequestParam(value = "swLng", defaultValue = "desc")double swLng,
-                                               @RequestParam(value = "neLat", defaultValue = "0")double neLat,
-                                               @RequestParam(value = "neLng", defaultValue = "10")double neLng,
-                                               @RequestParam(value = "level", defaultValue = "5")int level,
-                                               @RequestParam(value = "page", defaultValue = "0")int page,
-                                               @RequestParam(value = "size", defaultValue = "500")int size,
+    public ResponseEntity<?> getPhotoEntries(@RequestParam(value = "swLat", defaultValue = "33")double swLat,
+                                               @RequestParam(value = "swLng", defaultValue = "124")double swLng,
+                                               @RequestParam(value = "neLat", defaultValue = "43")double neLat,
+                                               @RequestParam(value = "neLng", defaultValue = "132")double neLng,
                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         User user = userService.findUserByEmail(userDetails.getUsername());
@@ -73,32 +69,9 @@ public class PhotoEntryController {
         return ResponseEntity.ok().body(response);
     }
 
-
-
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
-
-        long start = System.currentTimeMillis();
-
-        // 해당 User의 사진 정보 가져오기
-        User user = userService.findUserByEmail(userDetails.getUsername());
-        List<PhotoEntry> photoEntries = photoEntryRepository.findAllByUser(user);
-
-        long m = System.currentTimeMillis();
-        System.out.println("DB query 소요 시간 : " + (m - start) + "ms");
-
-        // 해당 User의 Photo entry 목록을 dto에 저장
-        List<PhotoEntryResponseDto> responseDtos = photoEntryService.wrappingPhotoEntry2Response(photoEntries);
-
-        long end = System.currentTimeMillis();
-        System.out.println("stream 소요 시간 : " + (end - m) + "ms");
-
-        return ResponseEntity.ok().body(responseDtos);
-    }
-
     // photo entry 삭제
-    @DeleteMapping("/{photoEntryId}")
-    public ResponseEntity<?> deletePhotoEntryById(@PathVariable("photoEntryId") Long photoEntryId,
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePhotoEntryById(@PathVariable("id") Long photoEntryId,
                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(photoEntryId);
@@ -107,24 +80,22 @@ public class PhotoEntryController {
         return ResponseEntity.ok().body("삭제되었습니다.");
     }
 
-    @PutMapping()
-    public ResponseEntity<?> updatePhotoEntryById(@RequestBody PhotoEntryUpdateRequestDto requestDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePhotoEntryById(@PathVariable("id") Long id,
+                                            @RequestBody PhotoEntryUpdateRequestDto requestDto) {
 
-        PhotoEntry photoEntry = photoEntryService.updatePhotoEntry(requestDto);
+        PhotoEntry photoEntry = photoEntryService.updatePhotoEntry(id, requestDto);
         PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
 
         return ResponseEntity.status(200).body(responseDto);
     }
 
-    @GetMapping("/friends/{friend}")
-    public ResponseEntity<?> getFriendsPhotoEntries(@PathVariable("friend")String friendEmail,
-                                                    @RequestParam(value = "swLat", defaultValue = "takenAt")double swLat,
-                                                    @RequestParam(value = "swLng", defaultValue = "desc")double swLng,
-                                                    @RequestParam(value = "neLat", defaultValue = "0")double neLat,
-                                                    @RequestParam(value = "neLng", defaultValue = "10")double neLng,
-                                                    @RequestParam(value = "level", defaultValue = "5")int level,
-                                                    @RequestParam(value = "page", defaultValue = "0")int page,
-                                                    @RequestParam(value = "size", defaultValue = "500")int size,
+    @GetMapping("/friend")
+    public ResponseEntity<?> getPhotoEntriesByFriends(@RequestParam("email")String friendEmail,
+                                                    @RequestParam(value = "swLat", defaultValue = "33")double swLat,
+                                                    @RequestParam(value = "swLng", defaultValue = "124")double swLng,
+                                                    @RequestParam(value = "neLat", defaultValue = "43")double neLat,
+                                                    @RequestParam(value = "neLng", defaultValue = "132")double neLng,
                                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userService.findUserByEmail(userDetails.getUsername());
         User friend = userService.findUserByEmail(friendEmail);
@@ -134,8 +105,8 @@ public class PhotoEntryController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/photo-entries/by-province")
-    public ResponseEntity<?> getPhotoEntriesByProvince(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @GetMapping("/statistics/province")
+    public ResponseEntity<?> getPhotoStatisticsByProvince(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userService.findUserByEmail(userDetails.getUsername());
         List<ProvincePhotoCountResponse> response = photoEntryService.getPhotoCountByProvince(user);
         return ResponseEntity.ok().body(response);

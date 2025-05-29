@@ -1,7 +1,7 @@
 package com.wheredidwego.dto.friendDto;
 
 import com.wheredidwego.domain.FriendRequest;
-import com.wheredidwego.domain.enumerate.RequestStatus;
+import com.wheredidwego.enumerate.RequestStatus;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

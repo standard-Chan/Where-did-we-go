@@ -1,7 +1,7 @@
 package com.wheredidwego.repository;
 
 import com.wheredidwego.domain.FriendRequest;
-import com.wheredidwego.domain.enumerate.RequestStatus;
+import com.wheredidwego.enumerate.RequestStatus;
 import com.wheredidwego.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

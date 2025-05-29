@@ -1,6 +1,6 @@
 package com.wheredidwego.domain;
 
-import com.wheredidwego.domain.enumerate.RequestStatus;
+import com.wheredidwego.enumerate.RequestStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

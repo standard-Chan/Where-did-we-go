@@ -1,7 +1,7 @@
 
 
 ### 사진 가져오기
-GET http://localhost:8080/api/photo-entries/all
+GET http://localhost:8080/api/photo-entries
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -11,16 +11,16 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 ### 범위 내의 사진 가져오기
-GET http://localhost:8080/api/photo-entries?swLat=37&swLng=126&neLat=38&neLng=128&level=12
+GET http://localhost:8080/api/photo-entries?swLat=37&swLng=126&neLat=38&neLng=128
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 ### 친구 사진 가져오기
-GET http://localhost:8080/api/photo-entries/friends/starp321@naver.com?swLat=37.4453022&swLng=126.9158586&neLat=37.6875009&neLng=127.0401414&level=12
+GET http://localhost:8080/api/photo-entries/friends?email=starp321@naver.com&swLat=37.4453022&swLng=126.9158586&neLat=37.6875009&neLng=127.0401414&level=12
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 ### 집계 데이터 가져오기
-GET http://localhost:8080/api/photo-entries/photo-entries/by-province
+GET http://localhost:8080/api/photo-entries/statistics/province
 Authorization: Bearer {{token}}
 Content-Type: application/json

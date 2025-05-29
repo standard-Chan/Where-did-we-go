@@ -2,7 +2,7 @@ package com.wheredidwego.service;
 
 import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.FriendRequest;
-import com.wheredidwego.domain.enumerate.RequestStatus;
+import com.wheredidwego.enumerate.RequestStatus;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.exception.FriendRequestException;
 import com.wheredidwego.repository.FriendRepository;
