@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> {
 
-    @Query("SELECT t FROM TouristSpot t WHERE t.lat BETWEEN :swLat AND :neLat AND t.lng BETWEEN :swLng AND :neLng")
+    @Query("SELECT t FROM TouristSpot t WHERE t.lat BETWEEN :swLat AND :neLat AND t.lng BETWEEN :swLng AND :neLng AND (t.categoryCode < '60516' OR t.categoryCode > '60526')")
     List<TouristSpot> findAllInBounds(@Param("swLat") double swLat, @Param("neLat") double neLat, @Param("swLng") double swLng, @Param("neLng") double neLng);
 }
 

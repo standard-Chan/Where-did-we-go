@@ -138,8 +138,10 @@ public class PhotoEntryService {
     public List<PhotoEntryResponseDto> wrappingPhotoEntry2Response (List<PhotoEntry> photoEntries) {
 
         List<PhotoEntryResponseDto> responseDtos;
+        long start = System.currentTimeMillis();
         // 데이터가 적을 경우 직렬처리
         if (photoEntries.size() < 100) {
+
             responseDtos = photoEntries
                     .stream()
                     .map(photoEntry -> {
@@ -157,6 +159,9 @@ public class PhotoEntryService {
                     }).toList();
         }
 
+        long end = System.currentTimeMillis();
+        System.out.println("성능시간");
+        System.out.println(end - start);
         return responseDtos;
     }
 

@@ -71,6 +71,8 @@ public class PhotoEntryController {
         return ResponseEntity.ok().body(response);
     }
 
+
+
     @GetMapping("/all")
     public ResponseEntity<?> getAllPhotoEntries(@AuthenticationPrincipal CustomUserDetails userDetails) {
 

@@ -33,7 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     // H2 Database (테스트용 인메모리 DB)
     //runtimeOnly("com.h2database:h2")
@@ -57,6 +57,9 @@ dependencies {
 
     //MYSQL
     implementation("mysql:mysql-connector-java:8.0.33")
+
+    // org
+    implementation("org.json:json:20240303")
 }
 
 tasks.test {

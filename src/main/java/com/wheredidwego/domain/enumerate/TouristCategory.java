@@ -23,6 +23,7 @@ public enum TouristCategory {
     GENERAL_SPOT("60513", "일반관광지"),
     POPULAR_SPOT("60514", "유명관광지"),
     DRAMA_MOVIE_SITE("60515", "드라마/영화촬영지"),
+
     HERB_FARM("60516", "관광농원/허브마을"),
     //FOOD_FASHION_STREET("60517", "먹거리/패션거리"),
     FARM_STAY("60518", "팜스테이"),
