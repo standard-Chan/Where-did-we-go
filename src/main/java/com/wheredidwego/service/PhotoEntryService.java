@@ -17,7 +17,6 @@ import com.wheredidwego.util.lib.DateUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -81,11 +80,11 @@ public class PhotoEntryService {
     }
 
     // id로 삭제
-    public void deletePhotoEntryById(Long id, UserDetails userDetails) {
+    public void deletePhotoEntryById(Long id, User user) {
         PhotoEntry photoEntry = getPhotoEntryById(id);
 
         // 해당 데이터의 소유 USER와 요청 User가 다른 경우
-        if (!photoEntry.getUser().getEmail().equals(userDetails.getUsername())) {
+        if (!photoEntry.getUser().getEmail().equals(user.getEmail())) {
             throw new AuthorizationDeniedException("삭제 권한이 없습니다.");
         }
         // s3 이미지 삭제
@@ -131,43 +130,32 @@ public class PhotoEntryService {
         return photoEntryRepository.save(photoEntry);
     }
 
+
+    public PhotoEntryResponseDto convertToResponseDto(PhotoEntry photoEntry) {
+        return new PhotoEntryResponseDto(photoEntry, s3Service);
+    }
+
     /**
      * photoEntry list를 responseDTO list로 변환
      * @param photoEntries
      * @return
      */
-    public List<PhotoEntryResponseDto> wrappingPhotoEntry2Response (List<PhotoEntry> photoEntries) {
+    public List<PhotoEntryResponseDto> convertToResponseDtoList(List<PhotoEntry> photoEntries) {
 
-        List<PhotoEntryResponseDto> responseDtos;
-        long start = System.currentTimeMillis();
-        // 데이터가 적을 경우 직렬처리
-        if (photoEntries.size() < 100) {
+        List<PhotoEntryResponseDto> response;
+        //병렬처리
+        response = photoEntries
+                .parallelStream()
+                .map(photoEntry -> {
+                    PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry, s3Service);
+                    return responseDto;
+                }).toList();
 
-            responseDtos = photoEntries
-                    .stream()
-                    .map(photoEntry -> {
-                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
-                        return responseDto;
-                    }).toList();
-        } else { // 데이터가 많을 경우 병렬처리
-            responseDtos = photoEntries
-                    .parallelStream()
-                    .map(photoEntry -> {
-                        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-                        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
-                        return responseDto;
-                    }).toList();
-        }
-
-        long end = System.currentTimeMillis();
-        System.out.println("성능시간");
-        System.out.println(end - start);
-        return responseDtos;
+        return response;
     }
 
     /**
-     * photoEntry list를 Region 정보만 담은 responseDTO list로 변환
+     * photoEntry list를 Region 정보만 담은 responseDTO list로 변환. 권한에 따른 제한된 정보를 보여주기 위함.
      * @param photoEntries
      * @return
      */
@@ -216,11 +204,11 @@ public class PhotoEntryService {
             }
             case VIEW_DETAIL -> {
                 photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
-                photoEntryResponseDtos = wrappingPhotoEntry2Response(photoEntries);
+                photoEntryResponseDtos = convertToResponseDtoList(photoEntries);
             }
             case FULL_ACCESS -> {
                 photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
-                photoEntryResponseDtos = wrappingPhotoEntry2Response(photoEntries);
+                photoEntryResponseDtos = convertToResponseDtoList(photoEntries);
                 // 추후 구현
             }
             default -> {

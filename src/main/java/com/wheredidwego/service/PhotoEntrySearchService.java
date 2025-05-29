@@ -63,8 +63,8 @@ public class PhotoEntrySearchService {
 
         // Dto에 mapping
         return photoEntries.map(photo -> {
-            PhotoEntryResponseDto dto = new PhotoEntryResponseDto(photo);
-            dto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photo.getPhotoPath()));
+            String photoUrl = s3Service.getDownloadS3PresignedUrl(photo.getPhotoPath());
+            PhotoEntryResponseDto dto = new PhotoEntryResponseDto(photo, photoUrl);
             return dto;
         });
     }

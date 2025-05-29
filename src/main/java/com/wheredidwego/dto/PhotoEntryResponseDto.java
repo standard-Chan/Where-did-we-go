@@ -2,6 +2,7 @@ package com.wheredidwego.dto;
 
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.Region;
+import com.wheredidwego.service.S3Service;
 import com.wheredidwego.util.lib.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,11 +24,11 @@ public class PhotoEntryResponseDto {
     private String district;
     private String subdistrict;
 
-    public PhotoEntryResponseDto(PhotoEntry photoEntry) {
+    public PhotoEntryResponseDto(PhotoEntry photoEntry, S3Service s3Service) {
         this.id = photoEntry.getId();
         this.description = photoEntry.getDescription();
         this.takenAt = DateUtil.localDateToString(photoEntry.getTakenAt());
-
+        this.photoUrl = s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath());
         Region region = photoEntry.getRegion();
         this.lat = photoEntry.getRegion().getLat();
         this.lng = photoEntry.getRegion().getLng();

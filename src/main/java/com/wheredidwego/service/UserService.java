@@ -38,6 +38,10 @@ public class UserService {
                 .orElseThrow(()-> new FriendException(ErrorCode.USER_NOT_FOUND));
     }
 
+    public User findUserByUserDetails(UserDetails userDetails) {
+        return findUserByEmail(userDetails.getUsername());
+    }
+
     public User findUserById(Long id) {
         return userRepository.findUserById(id)
                 .orElseThrow(()-> new EntityNotFoundException("존재하지 않는 사용자 ID 입니다."));

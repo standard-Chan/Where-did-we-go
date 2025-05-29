@@ -6,7 +6,6 @@ import com.wheredidwego.dto.PhotoEntryResponseDto;
 import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
 import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
 import com.wheredidwego.dto.ProvincePhotoCountResponse;
-import com.wheredidwego.repository.PhotoEntryRepository;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.PhotoEntryService;
 import com.wheredidwego.service.S3Service;
@@ -26,88 +25,79 @@ public class PhotoEntryController {
     private final PhotoEntryService photoEntryService;
     private final UserService userService;
     private final S3Service s3Service;
-    private final PhotoEntryRepository photoEntryRepository;
 
     @PostMapping()
-    public ResponseEntity<?> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadRequestDto dto,
+    public ResponseEntity<PhotoEntryResponseDto> uploadPhotoWithRegion(@RequestBody PhotoEntryUploadRequestDto dto,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
-        // 해당 user의 photo entry 데이터 가져오기
-        String email = userDetails.getUsername();
-        User user = userService.findUserByEmail(email);
-        PhotoEntry photoEntry = photoEntryService.uploadPhotoEntry(dto, user);
 
-        // response dto 생성 및 반환
-        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
+        User user = userService.findUserByUserDetails(userDetails);
+        PhotoEntry photoEntry = photoEntryService.uploadPhotoEntry(dto, user);
+        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry, s3Service);
+
         return ResponseEntity.status(201).body(responseDto);
     }
 
     // 해당 id의 photo entry 반환
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPhotoEntryById(@PathVariable("id") Long id) {
+    public ResponseEntity<PhotoEntryResponseDto> getPhotoEntryById(@PathVariable("id") Long id) {
 
         PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(id);
-        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
-        // s3 이미지 다운로드 presigned url
-        responseDto.setPhotoUrl(s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath()));
+        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry, s3Service);
+
         return ResponseEntity.ok().body(responseDto);
     }
 
     // photo entry list 반환
     @GetMapping()
-    public ResponseEntity<?> getPhotoEntries(@RequestParam(value = "swLat", defaultValue = "33")double swLat,
+    public ResponseEntity<List<PhotoEntryResponseDto>> getPhotoEntries(@RequestParam(value = "swLat", defaultValue = "33")double swLat,
                                                @RequestParam(value = "swLng", defaultValue = "124")double swLng,
                                                @RequestParam(value = "neLat", defaultValue = "43")double neLat,
                                                @RequestParam(value = "neLng", defaultValue = "132")double neLng,
                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        User user = userService.findUserByEmail(userDetails.getUsername());
+        User user = userService.findUserByUserDetails(userDetails);
         List<PhotoEntry> photoEntries = photoEntryService.getPhotoEntriesInBounds(user, swLat, swLng, neLat, neLng);
-
-        List<PhotoEntryResponseDto> response = photoEntryService.wrappingPhotoEntry2Response(photoEntries);
+        List<PhotoEntryResponseDto> response = photoEntryService.convertToResponseDtoList(photoEntries);
 
         return ResponseEntity.ok().body(response);
     }
 
     // photo entry 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePhotoEntryById(@PathVariable("id") Long photoEntryId,
+    public ResponseEntity<String> deletePhotoEntryById(@PathVariable("id") Long id,
                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
-
-        PhotoEntry photoEntry = photoEntryService.getPhotoEntryById(photoEntryId);
-        photoEntryService.deletePhotoEntryById(photoEntryId, userDetails);
-
-        return ResponseEntity.ok().body("삭제되었습니다.");
+        User user = userService.findUserByUserDetails(userDetails);
+        photoEntryService.deletePhotoEntryById(id, user);
+        return ResponseEntity.ok().body("성공적으로 삭제되었습니다.");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePhotoEntryById(@PathVariable("id") Long id,
+    public ResponseEntity<PhotoEntryResponseDto> updatePhotoEntryById(@PathVariable("id") Long id,
                                             @RequestBody PhotoEntryUpdateRequestDto requestDto) {
 
         PhotoEntry photoEntry = photoEntryService.updatePhotoEntry(id, requestDto);
-        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry);
+        PhotoEntryResponseDto responseDto = new PhotoEntryResponseDto(photoEntry, s3Service);
 
         return ResponseEntity.status(200).body(responseDto);
     }
 
-    @GetMapping("/friend")
-    public ResponseEntity<?> getPhotoEntriesByFriends(@RequestParam("email")String friendEmail,
+    @GetMapping("/friend/{email}")
+    public ResponseEntity<List<PhotoEntryResponseDto>> getPhotoEntriesByFriend(@PathVariable("email")String friendEmail,
                                                     @RequestParam(value = "swLat", defaultValue = "33")double swLat,
                                                     @RequestParam(value = "swLng", defaultValue = "124")double swLng,
                                                     @RequestParam(value = "neLat", defaultValue = "43")double neLat,
                                                     @RequestParam(value = "neLng", defaultValue = "132")double neLng,
                                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
-        User user = userService.findUserByEmail(userDetails.getUsername());
+        User user = userService.findUserByUserDetails(userDetails);
         User friend = userService.findUserByEmail(friendEmail);
 
-        // 친구 photo entry 얻기
         List<PhotoEntryResponseDto> response = photoEntryService.getFriendsPhotoEntries(user, friend, swLat, swLng, neLat, neLng);
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/statistics/province")
-    public ResponseEntity<?> getPhotoStatisticsByProvince(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        User user = userService.findUserByEmail(userDetails.getUsername());
+    public ResponseEntity<List<ProvincePhotoCountResponse>> getPhotoStatisticsByProvince(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userService.findUserByUserDetails(userDetails);
         List<ProvincePhotoCountResponse> response = photoEntryService.getPhotoCountByProvince(user);
         return ResponseEntity.ok().body(response);
     }
