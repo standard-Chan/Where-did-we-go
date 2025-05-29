@@ -4,6 +4,7 @@ import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.FriendRequest;
 import com.wheredidwego.enumerate.RequestStatus;
 import com.wheredidwego.domain.User;
+import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendRequestException;
 import com.wheredidwego.repository.FriendRepository;
 import com.wheredidwego.repository.FriendRequestRepository;
@@ -46,12 +47,12 @@ public class FriendRequestService {
         // 예외 처리
         // 해당 user와 이미 친구일 경우
         if (friendRepository.existsFriendByUserAndFriend(sender, receiver)) {
-            throw new FriendRequestException("이미 친구상태인 유저입니다.");
+            throw new FriendRequestException(ErrorCode.ALREADY_FRIEND);
         }
 
         // 해당 친구 요청을 이미 보낸 경우 (보류된 경우)
         if (friendRequestRepository.existsFriendRequestBySenderAndReceiverAndStatus(sender, receiver, RequestStatus.PENDING)) {
-            throw new FriendRequestException("친구 요청을 이미 보냈습니다.");
+            throw new FriendRequestException(ErrorCode.REQUEST_ALREADY_SENT);
         }
 
         FriendRequest friendRequest = new FriendRequest(sender, receiver);
@@ -59,35 +60,15 @@ public class FriendRequestService {
     }
 
     /**
-     * userDetails를 친구요청 전송 목록, 혹은 친구 요청을 받은 목록 검색을 위한 중간역할 (도메인 객체 변환 + 내부 로직 호출)
-     * @param userDetails 친구 요청 검색 대상자
-     * @param type 확인할 요청 타입 ( sent / received )
-     * @return
+     * 받은 친구 요청 전송 목록 조회
      */
-    public List<FriendRequest> handleSearchRequest(UserDetails userDetails, String type) {
-        User user = userService.findUserByEmail(userDetails.getUsername());
-
-        return SearchRequestByType(user, type);
-    }
-
-    /**
-     * 친구 요청 전송 목록, 혹은 친구 요청을 받은 목록 검색
-     * @param user
-     * @param type
-     * @return 친구 요청 목록
-     */
-    public List<FriendRequest> SearchRequestByType(User user, String type) {
-        if (type.equalsIgnoreCase("SENT")) {
-            return friendRequestRepository.findFriendRequestsBySenderAndStatus(user, RequestStatus.PENDING);
-        } else if (type.equalsIgnoreCase("RECEIVED")) {
-            return friendRequestRepository.findFriendRequestsByReceiverAndStatus(user, RequestStatus.PENDING);
-        }
-        throw new FriendRequestException("잘못된 param TYPE이 전달되었습니다. (type은 sent 혹은 received 이어야 합니다.)");
+    public List<FriendRequest> getReceivedRequest(User user) {
+        return friendRequestRepository.findFriendRequestsByReceiverAndStatus(user, RequestStatus.PENDING);
     }
 
     public FriendRequest searchRequestById(Long id) {
         return friendRequestRepository.findFriendRequestById(id)
-                .orElseThrow(() -> new FriendRequestException("해당 id의 친구요청을 찾을 수 없습니다."));
+                .orElseThrow(() -> new FriendRequestException(ErrorCode.FRIEND_REQUEST_NOT_FOUND));
     }
 
     /**
@@ -102,7 +83,7 @@ public class FriendRequestService {
 
         // 요청 수락자와 현재 로그인한 유저가 동일한 지 검사
         if (! (requestReceiver == friendRequest.getReceiver())) {
-            throw new FriendRequestException("친구 요청 결정 권한이 없습니다.");
+            throw new FriendRequestException(ErrorCode.NO_PERMISSION_TO_DECIDE);
         }
 
         // 수락 시
@@ -113,7 +94,7 @@ public class FriendRequestService {
         else if (status == RequestStatus.REJECTED) {
             return rejectFriendRequest(friendRequest);
         } else {
-            throw new FriendRequestException("잘못된 STATUS 값입니다. STATUS는 REJECT, ACCEPTED 이어야 합니다.");
+            throw new FriendRequestException(ErrorCode.INVALID_STATUS);
         }
     }
 
