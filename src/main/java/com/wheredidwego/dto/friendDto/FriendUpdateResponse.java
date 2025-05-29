@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class FriendUpdateDto {
+public class FriendUpdateResponse {
     private Long friendEntityId;
     private FriendAccessLevel accessLevel;
     private String description;
 
-    public FriendUpdateDto(Friend friend) {
+    public FriendUpdateResponse(Friend friend) {
         this.friendEntityId = friend.getId();
         this.accessLevel = friend.getAccessLevel();
         this.description = friend.getDescription();

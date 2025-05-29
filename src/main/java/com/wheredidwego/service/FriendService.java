@@ -18,14 +18,7 @@ import java.util.Set;
 @Transactional
 public class FriendService {
 
-    private final UserService userService;
     private final FriendRepository friendRepository;
-    private final UserRepository userRepository;
-
-    // 해당 유저의 친구 목록 조회
-    public Set<Friend> getFriendsSetByUser(User user) {
-        return user.getFriends();
-    }
 
     // 친구 조회
     public Friend getFriendByUserAndFriend(User user, User friend) {
@@ -38,7 +31,16 @@ public class FriendService {
                 .orElseThrow(()-> new FriendException(ErrorCode.FRIEND_NOT_FOUND));
     }
 
-    public Friend updateFriend(Friend friend, FriendAccessLevel accessLevel, String description) {
+    // 친구 관계 확인
+    public void checkFriendship(User user, Friend friend) {
+        Set<Friend> friendSet = user.getFriends();
+        if (!friendSet.contains(friend))
+            throw new FriendException(ErrorCode.FRIEND_NOT_FOUND);
+    }
+
+    public Friend updateFriend(User user, Friend friend, FriendAccessLevel accessLevel, String description) {
+        checkFriendship(user, friend);
+
         if (!(friend.getAccessLevel() == accessLevel)) {
             friend.setAccessLevel(accessLevel);
         }
@@ -51,21 +53,11 @@ public class FriendService {
 
     // 해당 유저의 친구 삭제
     public void deleteFriend(User user, User friendUser) {
-        // 유효성 검사
-        // 나 -> 친구
-        Friend friend = user.getFriends()
-                .stream().filter((f) -> {
-                    System.out.println("user - friends : " + f.getFriend().getId());
-                    return f.getFriend().getId() == friendUser.getId();})
-                .findFirst().orElseThrow(() -> new FriendException(ErrorCode.IS_NOT_FRIEND));
-        // 친구 -> 나
-        Friend friendOf = friendUser.getFriends()
-                .stream().filter((f) -> {
-                    System.out.println("friend - user : " + f.getFriend().getId());
-                        return f.getFriend().getId() == user.getId();})
-                .findFirst().orElseThrow(() -> new FriendException(ErrorCode.IS_NOT_FRIEND));
+        // 친구관계 edge
+        Friend friend = findFriendEdge(user, friendUser);
+        Friend friendOf = findFriendEdge(friendUser, user);
 
-
+        // 친구가 아닌 경우
         if (friend.getUser() != user) {
             throw new FriendException(ErrorCode.NOT_PERMISSION_TO_DELETE);
         }
@@ -83,4 +75,18 @@ public class FriendService {
         friendRepository.delete(friendOf);
     }
 
+    /**
+     * User와 Friend의 Entity로 FriendEntity를 찾는 메서드
+     * 방향성이 존재한다.
+     * @param from User
+     * @param to 친구 관계 대상자
+     * @return frined Entity
+     */
+    private Friend findFriendEdge(User from, User to) {
+        Friend friend = from.getFriends()
+                .stream().filter((f) -> f.getFriend().getId().equals(to.getId()))
+                .findFirst().orElseThrow(() -> new FriendException(ErrorCode.IS_NOT_FRIEND));
+
+        return friend;
+    }
 }

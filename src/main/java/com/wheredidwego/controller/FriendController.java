@@ -3,8 +3,8 @@ package com.wheredidwego.controller;
 import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.friendDto.FriendResponseDto;
-import com.wheredidwego.dto.friendDto.FriendUpdateDto;
-import com.wheredidwego.exception.FriendException;
+import com.wheredidwego.dto.friendDto.FriendUpdateRequest;
+import com.wheredidwego.dto.friendDto.FriendUpdateResponse;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.FriendService;
 import com.wheredidwego.service.UserService;
@@ -24,35 +24,38 @@ public class FriendController {
     private final UserService userService;
 
     @GetMapping()
-    public ResponseEntity<?> getFriends(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<FriendResponseDto>> getFriends(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        User user = userService.findUserByEmail(userDetails.getUsername());
-        Set<Friend> friends = friendService.getFriendsSetByUser(user);
+        User user = userService.findUserByUserDetails(userDetails);
+        Set<Friend> friends = user.getFriends();
         List<FriendResponseDto> response = friends.stream().map(FriendResponseDto::new).toList();
         return ResponseEntity.ok().body(response);
     }
 
-    @PutMapping()
-    public ResponseEntity<?> updateFriendInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                              @RequestBody FriendUpdateDto friendUpdateDto) {
+    @PutMapping("/{friendEntityId}")
+    public ResponseEntity<FriendUpdateResponse> updateFriendInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                @PathVariable("friendEntityId") Long friendEntityId,
+                                                                @RequestBody FriendUpdateRequest friendUpdateRequest) {
+        User user = userService.findUserByUserDetails(userDetails);
 
-        Friend friend = friendService.getFriendById(friendUpdateDto.getFriendEntityId());
-        Friend updatedFriend = friendService.updateFriend(friend, friendUpdateDto.getAccessLevel(), friendUpdateDto.getDescription());
-        FriendUpdateDto responseDto = new FriendUpdateDto(updatedFriend);
+        Friend friend = friendService.getFriendById(friendEntityId);
+        Friend updatedFriend = friendService.updateFriend(user, friend, friendUpdateRequest.getAccessLevel(), friendUpdateRequest.getDescription());
+        FriendUpdateResponse response = new FriendUpdateResponse(updatedFriend);
 
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{friendEmail}")
-    public ResponseEntity<?> deleteFriend(@PathVariable("friendEmail") String friendEmail,
+    // 설계 참고 (양방향을 모두 제거해야하므로 frinedEntityId가 아닌 friendEmail을 통해 삭제)
+    @DeleteMapping("/{friendId}")
+    public ResponseEntity<String> deleteFriend(@PathVariable("friendId") Long friendId,
                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        User user = userService.findUserByEmail(userDetails.getUsername());
-        User friendUser = userService.findUserByEmail(friendEmail);
+        User user = userService.findUserByUserDetails(userDetails);
+        User friendUser = userService.findUserById(friendId);
 
         friendService.deleteFriend(user, friendUser);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("삭제하였습니다.");
     }
 
 }
