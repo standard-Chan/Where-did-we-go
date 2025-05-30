@@ -1,6 +1,7 @@
 package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.User;
+import com.wheredidwego.dto.auth.SignupRequest;
 import com.wheredidwego.service.UserService;
 import com.wheredidwego.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -27,17 +28,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String password = request.get("password");
-        String nickname = request.get("nickname");
+    public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
+        String email = signupRequest.getEmail();
+        String password = signupRequest.getPassword();
+        String nickname = signupRequest.getNickname();
 
-        try {
-            userService.signup(email, password, nickname);
-            return ResponseEntity.ok("회원가입에 성공하였습니다.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        userService.signup(email, password, nickname);
+        return ResponseEntity.ok("회원가입에 성공하였습니다.");
     }
 
     @PostMapping("/login")
