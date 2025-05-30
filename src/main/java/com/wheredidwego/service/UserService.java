@@ -2,6 +2,7 @@ package com.wheredidwego.service;
 
 import com.wheredidwego.dto.UserResponseDto;
 import com.wheredidwego.domain.User;
+import com.wheredidwego.dto.auth.SignupRequest;
 import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.exception.auth.SignupException;
@@ -22,9 +23,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void signup(String email, String password, String nickname) {
+    public void signup(SignupRequest signupRequest) {
+        String email = signupRequest.getEmail();
+        String password = signupRequest.getPassword();
+        String nickname = signupRequest.getNickname();
 
-        UserValidator.validateSignupInput(email, password);
+        UserValidator.validateSignupInput(email, password, nickname);
 
         if (userRepository.existsUserByEmail(email)) {
             throw new SignupException(ErrorCode.ALREADY_REGISTERED_EMAIL);

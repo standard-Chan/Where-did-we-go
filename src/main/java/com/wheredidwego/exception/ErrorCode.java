@@ -12,6 +12,9 @@ public enum ErrorCode {
 
     // Auth
     ALREADY_REGISTERED_EMAIL("이미 가입된 이메일입니다."),
+    INVALID_EMAIL_FORMAT("유효하지 않은 이메일 형식입니다."),
+    INVALID_PASSWORD_LENGTH("비밀번호는 8자 이상 20자 이하로 입력해주세요."),
+    INVALID_NICKNAME_FORMAT("유효하지 않은 닉네임입니다. "),
 
     // Photo Entry
     PHOTO_ENTRY_NOT_FOUND("해당 정보가 존재하지 않습니다."),

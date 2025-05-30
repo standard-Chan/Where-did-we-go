@@ -1,6 +1,7 @@
 package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.User;
+import com.wheredidwego.dto.auth.LoginRequest;
 import com.wheredidwego.dto.auth.SignupRequest;
 import com.wheredidwego.service.UserService;
 import com.wheredidwego.util.JwtUtil;
@@ -29,37 +30,30 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
-        String email = signupRequest.getEmail();
-        String password = signupRequest.getPassword();
-        String nickname = signupRequest.getNickname();
-
-        userService.signup(email, password, nickname);
+        userService.signup(signupRequest);
         return ResponseEntity.ok("회원가입에 성공하였습니다.");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request, HttpServletResponse response) {
-        String email = request.get("email");
-        String password = request.get("password");
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
 
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(email, password);
 
-        try {
-            Authentication authentication = authenticationManager.authenticate(authToken);
+        Authentication authentication = authenticationManager.authenticate(authToken);
 
-            // jwt token 발급
-            User user = (User) authentication.getPrincipal();
-            String token = jwtUtil.createToken(user.getEmail());
+        // jwt token 발급
+        User user = (User) authentication.getPrincipal();
 
-            // cookie 생성
-            Cookie cookie = jwtUtil.createCookie(token);
-            response.addCookie(cookie);
+        String token = jwtUtil.createToken(user.getEmail());
 
-            return ResponseEntity.ok().body(Map.of("token", token));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("로그인 실패: " + e.getMessage());
-        }
+        // cookie 생성
+        Cookie cookie = jwtUtil.createCookie(token);
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok().body(Map.of("token", token));
     }
 
     @GetMapping("/logout")
