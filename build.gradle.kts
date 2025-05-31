@@ -34,6 +34,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // spring  boot 유효성 검사
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // H2 Database (테스트용 인메모리 DB)
     //runtimeOnly("com.h2database:h2")

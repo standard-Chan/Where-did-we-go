@@ -30,10 +30,7 @@ public class RegionController {
     @PostMapping()
     public ResponseEntity<RegionResponse> createRegion(@RequestBody RegionRequest regionRequest) {
 
-        Double lat = regionRequest.getLat();
-        Double lng = regionRequest.getLng();
-
-        Region region = regionService.findOrCreateRegion(lat, lng);
+        Region region = regionService.findOrCreateRegion(regionRequest.getLat(), regionRequest.getLng());
 
         RegionResponse response = new RegionResponse(region);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

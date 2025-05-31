@@ -2,7 +2,10 @@ package com.wheredidwego.service;
 
 import com.wheredidwego.domain.Region;
 import com.wheredidwego.dto.RegionInfoDto;
+import com.wheredidwego.dto.RegionRequest;
+import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.GeocodingException;
+import com.wheredidwego.exception.RegionException;
 import com.wheredidwego.repository.RegionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +23,9 @@ public class RegionService {
      * Region 생성.
      * 기존 좌표의 Region이 있을 경우, 생성하지 않고 기존 Region 반환.
      * 없을 경우 생성하여 Region 반환.
-     * @param lat
-     * @param lng
      * @return 생성/검색된 Region
      */
-    public Region findOrCreateRegion(Double lat, Double lng) {
+    public Region findOrCreateRegion(double lat, double lng) {
 
         // 중복된 Region -> 기존 Region 반환
         if (regionRepository.existsRegionByLatAndLng(lat, lng)) {
@@ -59,10 +60,8 @@ public class RegionService {
 
     public Region findRegionById(Long id) {
         return regionRepository.findRegionById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Region id입니다."));
+                .orElseThrow(() -> new RegionException(ErrorCode.REGION_NOT_FOUND));
     }
-
-
 
     /**
      * 좌표로 Region을 검색하는 메서드
@@ -72,11 +71,7 @@ public class RegionService {
      */
     public RegionInfoDto searchRegion(Double lat, Double lng) {
         RegionInfoDto regionInfo;
-        try {
-            regionInfo = reverseGeocodingService.getRegionFromCoords(lat, lng);
-        } catch (GeocodingException e) {
-            throw new GeocodingException("e.getMessage()" + "(" + lat + "," + lng + ")");
-        }
+        regionInfo = reverseGeocodingService.getRegionFromCoords(lat, lng);
         return regionInfo;
     }
 

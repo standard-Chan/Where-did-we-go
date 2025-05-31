@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum ErrorCode {
+public enum ErrorCode{
 
     // Common
     USER_NOT_FOUND("존재하지 않는 사용자입니다."),
@@ -33,9 +33,17 @@ public enum ErrorCode {
     /*INVALID_TYPE_PARAM("잘못된 param TYPE이 전달되었습니다. (type은 sent 혹은 received 이어야 합니다.)"),*/
     FRIEND_REQUEST_NOT_FOUND("해당 id의 친구요청을 찾을 수 없습니다."),
     NO_PERMISSION_TO_DECIDE("친구 요청 결정 권한이 없습니다."),
-    INVALID_STATUS("잘못된 STATUS 값입니다. STATUS는 REJECT, ACCEPTED 이어야 합니다.");
+    INVALID_STATUS("잘못된 STATUS 값입니다. STATUS는 REJECT, ACCEPTED 이어야 합니다."),
 
+    //
+    REGION_NOT_FOUND("REGION을 찾을 수 없습니다."),
 
+    // Geocoding
+    OUT_OF_KOREA("한국을 벗어나는 좌표입니다."),
+    LOCATION_NOT_FOUND("좌표에 해당하는 지역 정보를 찾을 수 없습니다."),
+    KAKAO_API_ERROR("카카오 API 요청 오류가 발생하였습니다. 다시 시도해주세요."),
+    PARSING_ERROR("응답 데이터를 처리할 수 없습니다. (parsing error)"),
+    UNKNOWN_ERROR("역지오코딩 처리 중 알 수 없는 오류가 발생했습니다.");
 
     private final String errorMessage;
 }

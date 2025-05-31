@@ -1,7 +1,7 @@
 package com.wheredidwego.exception;
 
-public class GeocodingException extends RuntimeException {
-    public GeocodingException(String message) {
-        super(message);
+public class GeocodingException extends AppException {
+    public GeocodingException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
