@@ -2,11 +2,13 @@ package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.auth.LoginRequest;
+import com.wheredidwego.dto.auth.LoginResponse;
 import com.wheredidwego.dto.auth.SignupRequest;
 import com.wheredidwego.service.UserService;
 import com.wheredidwego.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,13 +31,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<String> signup(@RequestBody @Valid SignupRequest signupRequest) {
         userService.signup(signupRequest);
         return ResponseEntity.ok("회원가입에 성공하였습니다.");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
@@ -53,11 +55,13 @@ public class AuthController {
         Cookie cookie = jwtUtil.createCookie(token);
         response.addCookie(cookie);
 
-        return ResponseEntity.ok().body(Map.of("token", token));
+        LoginResponse responseDto = new LoginResponse(token);
+
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<String> logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("access_token", "NULL");
         cookie.setPath("/"); // 전체 경로 설정
         //cookie.setHttpOnly(true); // 원래 쿠키가 HttpOnly면 유지

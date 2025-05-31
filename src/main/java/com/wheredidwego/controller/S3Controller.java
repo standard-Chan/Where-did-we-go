@@ -18,7 +18,7 @@ public class S3Controller {
     private final S3Service s3Service;
 
     @GetMapping("/presignedUrl")
-    public ResponseEntity<?> getPresignedUrl(@AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseEntity<UploadPresignedDto> getPresignedUrl(@AuthenticationPrincipal CustomUserDetails userDetails){
 
         // filename 지정: timestamp로 파일명 겹치지 않도록 설정
         String filename = String.valueOf(System.currentTimeMillis());

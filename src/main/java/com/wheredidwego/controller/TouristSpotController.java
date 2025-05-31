@@ -20,7 +20,7 @@ public class TouristSpotController {
     private final TouristSpotService touristSpotService;
 
     @GetMapping()
-    public ResponseEntity<?> getMyPhotoEntries(@RequestParam(value = "swLat", defaultValue = "takenAt")double swLat,
+    public ResponseEntity<List<TouristSpotResponse>> getMyPhotoEntries(@RequestParam(value = "swLat", defaultValue = "takenAt")double swLat,
                                                @RequestParam(value = "swLng", defaultValue = "desc")double swLng,
                                                @RequestParam(value = "neLat", defaultValue = "0")double neLat,
                                                @RequestParam(value = "neLng", defaultValue = "10")double neLng,

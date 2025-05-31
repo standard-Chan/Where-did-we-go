@@ -22,7 +22,7 @@ public class FriendRequestController {
     private final UserService userService;
 
     @PostMapping()
-    public ResponseEntity<?> sendFriendRequest(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<SentFriendRequestResponseDto> sendFriendRequest(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                @RequestBody FriendRequestDto requestDto) {
         User user = userService.findUserByUserDetails(userDetails);
         User receiver = userService.findUserByEmail(requestDto.getFriendEmail());
@@ -60,7 +60,7 @@ public class FriendRequestController {
 
     // 친구 요청 수락/거절 처리
     @PatchMapping()
-    public ResponseEntity<?> updateStatus(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<FriendRequestDecisionResponseDto> updateStatus(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                @RequestBody FriendRequestDecisionDto requestDto) {
 
             FriendRequest friendRequest = friendRequestService.FriendRequestDecisionHandler(userDetails, requestDto.getFriendRequestId(), requestDto.getStatus());
