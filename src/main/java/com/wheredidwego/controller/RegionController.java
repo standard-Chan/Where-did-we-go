@@ -2,6 +2,8 @@ package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.Region;
 import com.wheredidwego.dto.RegionInfoDto;
+import com.wheredidwego.dto.RegionRequest;
+import com.wheredidwego.dto.RegionResponse;
 import com.wheredidwego.exception.GeocodingException;
 import com.wheredidwego.service.RegionService;
 import lombok.RequiredArgsConstructor;
@@ -12,47 +14,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/regions")
 @RequiredArgsConstructor
 public class RegionController {
 
     private final RegionService regionService;
 
-    @GetMapping("/regions")
-    public ResponseEntity<?> getRegionById(@RequestParam("id") Long id) {
-        try {
+    @GetMapping("/{id}")
+    public ResponseEntity<RegionResponse> getRegionById(@PathVariable("id") Long id) {
             Region region = regionService.findRegionById(id);
-            return ResponseEntity.ok().body(region);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            RegionResponse response = new RegionResponse(region);
+            return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/regions")
-    public ResponseEntity<?> createRegion(@RequestBody Map<String, String> request) {
-        String latStr = request.get("lat");
-        String lngStr = request.get("lng");
+    @PostMapping()
+    public ResponseEntity<RegionResponse> createRegion(@RequestBody RegionRequest regionRequest) {
 
-        try {
-            Double lat = Double.parseDouble(latStr);
-            Double lng = Double.parseDouble(lngStr);
-            Region region = regionService.findOrCreateRegion(lat, lng);
-            RegionInfoDto responseDto = new RegionInfoDto(region);
-            return ResponseEntity.status(201).body(responseDto);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("잘못된 형식의 좌표를 입력하였습니다.");
-        } catch (GeocodingException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        Double lat = regionRequest.getLat();
+        Double lng = regionRequest.getLng();
+
+        Region region = regionService.findOrCreateRegion(lat, lng);
+
+        RegionResponse response = new RegionResponse(region);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
     }
 
-    @GetMapping("/regions/geo")
-    public ResponseEntity<?> searchRegion(@RequestParam("lat") double lat, @RequestParam("lng") double lng) {
-        try {
-            RegionInfoDto regionInfo = regionService.searchRegion(lat, lng);
-            return ResponseEntity.ok().body(regionInfo);
-        } catch (GeocodingException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping("/geo")
+    public ResponseEntity<RegionInfoDto> searchRegion(@RequestParam("lat") double lat, @RequestParam("lng") double lng) {
+        RegionInfoDto regionInfo = regionService.searchRegion(lat, lng);
+        return ResponseEntity.ok().body(regionInfo);
     }
 }
