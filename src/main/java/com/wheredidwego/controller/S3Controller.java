@@ -1,6 +1,6 @@
 package com.wheredidwego.controller;
 
-import com.wheredidwego.dto.UploadPresignedDto;
+import com.wheredidwego.dto.util.UploadPresignedDto;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/s3")

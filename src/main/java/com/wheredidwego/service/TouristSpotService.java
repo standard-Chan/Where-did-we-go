@@ -1,7 +1,7 @@
 package com.wheredidwego.service;
 
 import com.wheredidwego.domain.TouristSpot;
-import com.wheredidwego.dto.TouristSpotResponse;
+import com.wheredidwego.dto.util.TouristSpotResponse;
 import com.wheredidwego.repository.TouristSpotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

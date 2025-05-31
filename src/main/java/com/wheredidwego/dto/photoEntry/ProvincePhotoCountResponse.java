@@ -1,4 +1,4 @@
-package com.wheredidwego.dto;
+package com.wheredidwego.dto.photoEntry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

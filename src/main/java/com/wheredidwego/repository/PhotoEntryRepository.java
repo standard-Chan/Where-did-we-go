@@ -2,7 +2,7 @@ package com.wheredidwego.repository;
 
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.User;
-import com.wheredidwego.dto.ProvincePhotoCountResponse;
+import com.wheredidwego.dto.photoEntry.ProvincePhotoCountResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,7 +32,7 @@ public interface PhotoEntryRepository extends JpaRepository<PhotoEntry, Long> {
 
     Page<PhotoEntry> findAllByUser(User user, Pageable pageable);
 
-    @Query("SELECT new com.wheredidwego.dto.ProvincePhotoCountResponse(r.province, count(p)) FROM PhotoEntry p JOIN p.region r "+
+    @Query("SELECT new com.wheredidwego.dto.photoEntry.ProvincePhotoCountResponse(r.province, count(p)) FROM PhotoEntry p JOIN p.region r "+
     "WHERE p.user = :user GROUP BY r.province")
     List<ProvincePhotoCountResponse> findPhotoEntriesCountsPerProvince(@Param("user") User user);
 }

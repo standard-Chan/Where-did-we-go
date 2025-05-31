@@ -2,10 +2,10 @@ package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.User;
-import com.wheredidwego.dto.PhotoEntryResponseDto;
-import com.wheredidwego.dto.PhotoEntryUpdateRequestDto;
-import com.wheredidwego.dto.PhotoEntryUploadRequestDto;
-import com.wheredidwego.dto.ProvincePhotoCountResponse;
+import com.wheredidwego.dto.photoEntry.PhotoEntryResponseDto;
+import com.wheredidwego.dto.photoEntry.PhotoEntryUpdateRequestDto;
+import com.wheredidwego.dto.photoEntry.PhotoEntryUploadRequestDto;
+import com.wheredidwego.dto.photoEntry.ProvincePhotoCountResponse;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.PhotoEntryMapper;
 import com.wheredidwego.service.PhotoEntryService;

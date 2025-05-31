@@ -1,4 +1,4 @@
-package com.wheredidwego.dto;
+package com.wheredidwego.dto.util;
 
 import com.wheredidwego.domain.TouristSpot;
 import lombok.Getter;

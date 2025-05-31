@@ -1,9 +1,7 @@
 package com.wheredidwego.service;
 
 import com.wheredidwego.domain.PhotoEntry;
-import com.wheredidwego.domain.User;
-import com.wheredidwego.dto.PhotoEntryResponseDto;
-import com.wheredidwego.dto.ProvincePhotoCountResponse;
+import com.wheredidwego.dto.photoEntry.PhotoEntryResponseDto;
 import com.wheredidwego.repository.PhotoEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

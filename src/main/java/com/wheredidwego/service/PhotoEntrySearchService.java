@@ -2,11 +2,10 @@ package com.wheredidwego.service;
 
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.User;
-import com.wheredidwego.dto.PhotoEntryResponseDto;
+import com.wheredidwego.dto.photoEntry.PhotoEntryResponseDto;
 import com.wheredidwego.repository.PhotoEntryRepository;
 import com.wheredidwego.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.SortDirection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

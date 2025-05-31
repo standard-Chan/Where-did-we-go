@@ -1,17 +1,14 @@
 package com.wheredidwego.controller;
 
 import com.wheredidwego.domain.Region;
-import com.wheredidwego.dto.RegionInfoDto;
-import com.wheredidwego.dto.RegionRequest;
-import com.wheredidwego.dto.RegionResponse;
-import com.wheredidwego.exception.GeocodingException;
+import com.wheredidwego.dto.region.RegionInfoDto;
+import com.wheredidwego.dto.region.RegionRequest;
+import com.wheredidwego.dto.region.RegionResponse;
 import com.wheredidwego.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/regions")

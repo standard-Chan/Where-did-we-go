@@ -1,6 +1,6 @@
 package com.wheredidwego.service;
 
-import com.wheredidwego.dto.RegionInfoDto;
+import com.wheredidwego.dto.region.RegionInfoDto;
 import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.GeocodingException;
 import jakarta.transaction.Transactional;

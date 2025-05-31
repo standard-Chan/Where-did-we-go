@@ -1,9 +1,8 @@
 package com.wheredidwego.domain;
 
-import com.wheredidwego.dto.RegionInfoDto;
+import com.wheredidwego.dto.region.RegionInfoDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

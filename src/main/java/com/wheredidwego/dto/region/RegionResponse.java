@@ -1,4 +1,4 @@
-package com.wheredidwego.dto;
+package com.wheredidwego.dto.region;
 
 import com.wheredidwego.domain.Region;
 import lombok.Getter;

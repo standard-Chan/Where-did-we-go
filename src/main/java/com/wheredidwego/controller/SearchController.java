@@ -1,14 +1,11 @@
 package com.wheredidwego.controller;
 
-import com.wheredidwego.domain.PhotoEntry;
-import com.wheredidwego.dto.PhotoEntryResponseDto;
+import com.wheredidwego.dto.photoEntry.PhotoEntryResponseDto;
 import com.wheredidwego.security.details.CustomUserDetails;
 import com.wheredidwego.service.PhotoEntrySearchService;
 import com.wheredidwego.service.PhotoEntryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;

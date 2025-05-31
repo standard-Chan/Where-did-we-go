@@ -1,10 +1,8 @@
 package com.wheredidwego.service;
 
 import com.wheredidwego.domain.Region;
-import com.wheredidwego.dto.RegionInfoDto;
-import com.wheredidwego.dto.RegionRequest;
+import com.wheredidwego.dto.region.RegionInfoDto;
 import com.wheredidwego.exception.ErrorCode;
-import com.wheredidwego.exception.GeocodingException;
 import com.wheredidwego.exception.RegionException;
 import com.wheredidwego.repository.RegionRepository;
 import jakarta.transaction.Transactional;
