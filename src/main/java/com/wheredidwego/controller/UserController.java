@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/users/me")
+    @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok().body(userService.getUserResponseDtoByUserDetails(userDetails));
     }
