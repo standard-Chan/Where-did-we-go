@@ -3,6 +3,7 @@ package com.wheredidwego.dto.photoEntry;
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.Region;
 import com.wheredidwego.service.S3Service;
+import com.wheredidwego.temp.PhotoEntryWithRegionDto;
 import com.wheredidwego.util.lib.DateUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,18 @@ public class PhotoEntryResponseDto {
         this.province = region.getProvince();
         this.district = region.getDistrict();
         this.subdistrict = region.getSubdistrict();
+    }
+
+    public PhotoEntryResponseDto(PhotoEntryWithRegionDto photoEntry, S3Service s3Service) {
+        this.id = photoEntry.getId();
+        this.description = photoEntry.getDescription();
+        this.takenAt = DateUtil.localDateToString(photoEntry.getTakenAt());
+        this.photoUrl = s3Service.getDownloadS3PresignedUrl(photoEntry.getPhotoPath());
+        this.lat = photoEntry.getLat();
+        this.lng = photoEntry.getLng();
+        this.province = photoEntry.getProvince();
+        this.district = photoEntry.getDistrict();
+        this.subdistrict = photoEntry.getSubdistrict();
     }
 
     /**

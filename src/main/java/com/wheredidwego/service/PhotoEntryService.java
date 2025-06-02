@@ -12,6 +12,7 @@ import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.exception.PhotoEntryException;
 import com.wheredidwego.repository.PhotoEntryRepository;
+import com.wheredidwego.temp.PhotoEntryWithRegionDto;
 import com.wheredidwego.util.awsS3.AwsS3Util;
 import com.wheredidwego.util.lib.DateUtil;
 import jakarta.transaction.Transactional;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static java.util.Arrays.stream;
 
 
 @Service
@@ -153,5 +156,25 @@ public class PhotoEntryService {
      */
     public List<ProvincePhotoCountResponse> getPhotoEntryStatisticsByProvince(User user) {
         return photoEntryRepository.findPhotoEntriesCountsPerProvince(user);
+    }
+
+    /** native query로 subquery를 from 절에 넣고 join하여 데이터를 가져오기
+     */
+    public List<PhotoEntryWithRegionDto> getPhotoEntryWithRegionDto(User user, double swLat, double swLng, double neLat, double neLng) {
+        List<PhotoEntryWithRegionDto> result = photoEntryRepository.findAllInBoundsNative(user.getId(), swLat, neLat, swLng, neLng)
+    .stream()
+                .map(r -> new PhotoEntryWithRegionDto(
+                        ((Number) r[0]).longValue(),
+                        (String) r[1],
+                        (String) r[2],
+                        r[3] != null ? ((java.sql.Date) r[3]).toLocalDate() : null,
+                        (Double) r[4],
+                        (Double) r[5],
+                        (String) r[6],
+                        (String) r[7],
+                        (String) r[8]
+                )).toList();
+
+        return result;
     }
 }
