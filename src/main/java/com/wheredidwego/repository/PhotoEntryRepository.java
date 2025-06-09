@@ -4,6 +4,7 @@ import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.photoEntry.ProvincePhotoCountResponse;
 import com.wheredidwego.repository.queryDSL.custom.PhotoEntryRepositoryCustom;
+import com.wheredidwego.temp.PhotoEntryWithRegionDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +23,7 @@ public interface PhotoEntryRepository extends JpaRepository<PhotoEntry, Long>, P
     List<PhotoEntry> findAllByUser(@Param("user") User user);
 
     @Query(value = """
-        SELECT p.id AS photoEntryId,
+        SELECT p.id,
                p.photo_path,
                p.description,
                p.taken_at,

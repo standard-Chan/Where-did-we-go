@@ -74,7 +74,11 @@ public class PhotoEntryService {
      * @return List photoEntry
      */
     public List<PhotoEntry> getPhotoEntriesInBounds(User user, double swLat, double swLng, double neLat, double neLng) {
-        return photoEntryRepository.findAllInBounds(user, swLat, neLat, swLng, neLng);
+        long start = System.currentTimeMillis();
+        List <PhotoEntry> photoEntries = photoEntryRepository.findAllInBounds(user, swLat, neLat, swLng, neLng);
+        long end = System.currentTimeMillis();
+        System.out.println("소요시간(native) : " + (end-start));
+        return photoEntries;
     }
 
     public void deletePhotoEntryById(Long id, User user) {
@@ -161,8 +165,9 @@ public class PhotoEntryService {
     /** native query로 subquery를 from 절에 넣고 join하여 데이터를 가져오기
      */
     public List<PhotoEntryWithRegionDto> getPhotoEntryWithRegionDto(User user, double swLat, double swLng, double neLat, double neLng) {
+        long start = System.currentTimeMillis();
         List<PhotoEntryWithRegionDto> result = photoEntryRepository.findAllInBoundsNative(user.getId(), swLat, neLat, swLng, neLng)
-    .stream()
+                .stream()
                 .map(r -> new PhotoEntryWithRegionDto(
                         ((Number) r[0]).longValue(),
                         (String) r[1],
@@ -174,6 +179,9 @@ public class PhotoEntryService {
                         (String) r[7],
                         (String) r[8]
                 )).toList();
+
+        long end = System.currentTimeMillis();
+        System.out.println("소요시간(native) : " + (end-start));
 
         return result;
     }

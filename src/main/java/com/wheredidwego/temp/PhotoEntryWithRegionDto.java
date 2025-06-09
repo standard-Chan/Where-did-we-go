@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class PhotoEntryWithRegionDto {
-    private Long Id;
+    private Long id;
     private String photoPath;
     private String description;
     private LocalDate takenAt;
