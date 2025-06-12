@@ -19,6 +19,7 @@ public enum ErrorCode{
     // Photo Entry
     PHOTO_ENTRY_NOT_FOUND("해당 정보가 존재하지 않습니다."),
     NO_DELETE_PERMISSION("삭제 권한이 없습니다."),
+    NO_VIEW_PERMISSION("조회 권한이 없습니다."),
 
     // Friend
     FRIEND_NOT_FOUND("친구를 찾을 수 없습니다."),

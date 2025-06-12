@@ -39,7 +39,7 @@ public class FriendController {
         User user = userService.findUserByUserDetails(userDetails);
 
         Friend friend = friendService.getFriendById(friendEntityId);
-        Friend updatedFriend = friendService.updateFriend(user, friend, friendUpdateRequest.getAccessLevel(), friendUpdateRequest.getDescription());
+        Friend updatedFriend = friendService.updateFriendInfo(user, friend, friendUpdateRequest.getAccessLevel(), friendUpdateRequest.getDescription());
         FriendUpdateResponse response = new FriendUpdateResponse(updatedFriend);
 
         return ResponseEntity.ok(response);
@@ -57,5 +57,4 @@ public class FriendController {
 
         return ResponseEntity.ok().body("삭제하였습니다.");
     }
-
 }

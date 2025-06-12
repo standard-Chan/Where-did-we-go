@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class UserValidator {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[A-Za-z0-9_-]]");
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[A-Za-z0-9_-]");
 
     public static void validateSignupInput(String email, String password, String nickname) {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
@@ -19,7 +19,7 @@ public class UserValidator {
             throw new SignupException(ErrorCode.INVALID_PASSWORD_LENGTH);
         }
 
-        if (nickname.isEmpty() || !NICKNAME_PATTERN.matcher(nickname).matches()) {
+        if (nickname.isEmpty()) {
             throw new SignupException(ErrorCode.INVALID_NICKNAME_FORMAT);
         }
     }

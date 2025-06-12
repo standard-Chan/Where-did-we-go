@@ -20,9 +20,13 @@ GET http://localhost:8080/api/v1/photo-entries/native?swLat=37&swLng=126&neLat=3
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
+### 친구 사진id로 사진 가져오기
+GET http://localhost:8080/api/v1/users/1/photo-entries/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
 
 ### 친구 사진 가져오기
-GET http://localhost:8080/api/v1/photo-entries/friends?email=starp321@naver.com&swLat=37.4453022&swLng=126.9158586&neLat=37.6875009&neLng=127.0401414&level=12
+GET http://localhost:8080/api/v1/users/1/photo-entries?swLat=37.4453022&swLng=126.9158586&neLat=37.6875009&neLng=127.0401414&level=12
 Authorization: Bearer {{token}}
 Content-Type: application/json
 

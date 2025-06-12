@@ -1,6 +1,5 @@
 package com.wheredidwego.service;
 
-import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.Region;
 import com.wheredidwego.domain.User;
@@ -8,11 +7,11 @@ import com.wheredidwego.dto.photoEntry.PhotoEntryResponseDto;
 import com.wheredidwego.dto.photoEntry.PhotoEntryUpdateRequestDto;
 import com.wheredidwego.dto.photoEntry.PhotoEntryUploadRequestDto;
 import com.wheredidwego.dto.photoEntry.ProvincePhotoCountResponse;
+import com.wheredidwego.enumerate.FriendAccessLevel;
 import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
 import com.wheredidwego.exception.PhotoEntryException;
 import com.wheredidwego.repository.PhotoEntryRepository;
-import com.wheredidwego.temp.PhotoEntryWithRegionDto;
 import com.wheredidwego.util.awsS3.AwsS3Util;
 import com.wheredidwego.util.lib.DateUtil;
 import jakarta.transaction.Transactional;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static java.util.Arrays.stream;
 
 
 @Service
@@ -37,6 +34,12 @@ public class PhotoEntryService {
     private final PhotoEntryMapper photoEntryMapper;
 
     public PhotoEntry getPhotoEntryById(Long id) {
+        return photoEntryRepository.getPhotoEntriesById(id)
+                .orElseThrow(() -> new PhotoEntryException(ErrorCode.PHOTO_ENTRY_NOT_FOUND));
+    }
+
+    public PhotoEntry getPhotoEntryById(Long id, User user, User friend) {
+        friendService.checkPermission(friend, user);
         return photoEntryRepository.getPhotoEntriesById(id)
                 .orElseThrow(() -> new PhotoEntryException(ErrorCode.PHOTO_ENTRY_NOT_FOUND));
     }
@@ -74,10 +77,7 @@ public class PhotoEntryService {
      * @return List photoEntry
      */
     public List<PhotoEntry> getPhotoEntriesInBounds(User user, double swLat, double swLng, double neLat, double neLng) {
-        long start = System.currentTimeMillis();
         List <PhotoEntry> photoEntries = photoEntryRepository.findAllInBounds(user, swLat, neLat, swLng, neLng);
-        long end = System.currentTimeMillis();
-        System.out.println("소요시간(native) : " + (end-start));
         return photoEntries;
     }
 
@@ -86,6 +86,28 @@ public class PhotoEntryService {
 
         // 해당 데이터의 소유 USER와 요청 User가 다른 경우
         if (!photoEntry.getUser().getEmail().equals(user.getEmail())) {
+            throw new PhotoEntryException(ErrorCode.NOT_PERMISSION_TO_DELETE);
+        }
+
+        // s3 이미지 삭제
+        String photoPath = photoEntry.getPhotoPath();
+        awsS3Util.deleteImage(photoPath);
+        // db 데이터 삭제
+        photoEntryRepository.deleteById(id);
+    }
+
+    /**
+     * user가 friend의 photo entity를 삭제하는 메서드
+     * @param id photo entry id
+     * @param user 삭제 요청 User
+     * @param friend 데이터를 삭제할 대상 User
+     */
+    public void deletePhotoEntryById(Long id, User user, User friend) {
+        PhotoEntry photoEntry = getPhotoEntryById(id);
+        FriendAccessLevel accessLevel = friendService.getAccessLevel(friend, user);
+
+        // 삭제 권한이 없는 경우
+        if (!accessLevel.equals(FriendAccessLevel.FULL_ACCESS)) {
             throw new PhotoEntryException(ErrorCode.NOT_PERMISSION_TO_DELETE);
         }
 
@@ -138,11 +160,12 @@ public class PhotoEntryService {
     public List<PhotoEntryResponseDto> getFriendsPhotoEntries(User user, User friendUser, double swLat, double swLng, double neLat, double neLng) {
         List<PhotoEntry> photoEntries;
         List<PhotoEntryResponseDto> photoEntryResponseDtos;
-        Friend relationship = friendService.getFriendByUserAndFriend(user, friendUser);
 
-        switch (relationship.getAccessLevel()) {
+        FriendAccessLevel accessLevel = friendService.getAccessLevel(friendUser, user);
+
+        switch (accessLevel) {
             case NONE -> throw new FriendException(ErrorCode.NOT_PERMISSION_TO_VIEW);
-            case LOCATION_ONLY -> {
+            case LOCATION_ONLY -> { // 좌표 정보 관람 가능
                 photoEntries = getPhotoEntriesInBounds(friendUser, swLat, swLng, neLat, neLng);
                 photoEntryResponseDtos = photoEntryMapper.mapToDtoListOnlyRegion(photoEntries);
             }
@@ -162,27 +185,27 @@ public class PhotoEntryService {
         return photoEntryRepository.findPhotoEntriesCountsPerProvince(user);
     }
 
-    /** native query로 subquery를 from 절에 넣고 join하여 데이터를 가져오기
-     */
-    public List<PhotoEntryWithRegionDto> getPhotoEntryWithRegionDto(User user, double swLat, double swLng, double neLat, double neLng) {
-        long start = System.currentTimeMillis();
-        List<PhotoEntryWithRegionDto> result = photoEntryRepository.findAllInBoundsNative(user.getId(), swLat, neLat, swLng, neLng)
-                .stream()
-                .map(r -> new PhotoEntryWithRegionDto(
-                        ((Number) r[0]).longValue(),
-                        (String) r[1],
-                        (String) r[2],
-                        r[3] != null ? ((java.sql.Date) r[3]).toLocalDate() : null,
-                        (Double) r[4],
-                        (Double) r[5],
-                        (String) r[6],
-                        (String) r[7],
-                        (String) r[8]
-                )).toList();
-
-        long end = System.currentTimeMillis();
-        System.out.println("소요시간(native) : " + (end-start));
-
-        return result;
-    }
+//    /** native query로 subquery를 from 절에 넣고 join하여 데이터를 가져오기
+//     */
+//    public List<PhotoEntryWithRegionDto> getPhotoEntryWithRegionDto(User user, double swLat, double swLng, double neLat, double neLng) {
+//        long start = System.currentTimeMillis();
+//        List<PhotoEntryWithRegionDto> result = photoEntryRepository.findAllInBoundsNative(user.getId(), swLat, neLat, swLng, neLng)
+//                .stream()
+//                .map(r -> new PhotoEntryWithRegionDto(
+//                        ((Number) r[0]).longValue(),
+//                        (String) r[1],
+//                        (String) r[2],
+//                        r[3] != null ? ((java.sql.Date) r[3]).toLocalDate() : null,
+//                        (Double) r[4],
+//                        (Double) r[5],
+//                        (String) r[6],
+//                        (String) r[7],
+//                        (String) r[8]
+//                )).toList();
+//
+//        long end = System.currentTimeMillis();
+//        System.out.println("소요시간(native) : " + (end-start));
+//
+//        return result;
+//    }
 }

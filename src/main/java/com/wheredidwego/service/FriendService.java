@@ -5,8 +5,8 @@ import com.wheredidwego.enumerate.FriendAccessLevel;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.exception.ErrorCode;
 import com.wheredidwego.exception.FriendException;
+import com.wheredidwego.exception.PhotoEntryException;
 import com.wheredidwego.repository.FriendRepository;
-import com.wheredidwego.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,14 +32,20 @@ public class FriendService {
     }
 
     // 친구 관계 확인
-    public void checkFriendship(User user, Friend friend) {
-        Set<Friend> friendSet = user.getFriends();
-        if (!friendSet.contains(friend))
-            throw new FriendException(ErrorCode.FRIEND_NOT_FOUND);
+    public Friend checkFriendShip(User user, User friend) {
+        return friendRepository.findFriendByUserAndFriend(user, friend)
+                .orElseThrow(()-> new FriendException(ErrorCode.IS_NOT_FRIEND));
     }
 
-    public Friend updateFriend(User user, Friend friend, FriendAccessLevel accessLevel, String description) {
-        checkFriendship(user, friend);
+    public void checkPermission(User from, User to) {
+        FriendAccessLevel accessLevel = getAccessLevel(from, to);
+        if (FriendAccessLevel.NONE.equals(accessLevel)) {
+            throw new PhotoEntryException(ErrorCode.NOT_PERMISSION_TO_VIEW);
+        }
+    }
+
+    public Friend updateFriendInfo(User user, Friend friend, FriendAccessLevel accessLevel, String description) {
+        checkFriendShip(user, friend.getFriend());
 
         if (!(friend.getAccessLevel() == accessLevel)) {
             friend.setAccessLevel(accessLevel);
@@ -88,5 +94,16 @@ public class FriendService {
                 .findFirst().orElseThrow(() -> new FriendException(ErrorCode.IS_NOT_FRIEND));
 
         return friend;
+    }
+
+    /**
+     * from 유저의 to 유저에 대한 권한 레벨 반환 메서드
+     * @param from 권한을 설정한 친구
+     * @param to   권한을 지정 받은 유저
+     * @return Access level
+     */
+    public FriendAccessLevel getAccessLevel(User from, User to) {
+        Friend friendship = findFriendEdge(from, to);
+        return friendship.getAccessLevel();
     }
 }
