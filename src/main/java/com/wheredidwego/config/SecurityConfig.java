@@ -3,6 +3,7 @@ package com.wheredidwego.config;
 import com.wheredidwego.security.filter.JwtAuthenticationFilter;
 import com.wheredidwego.repository.UserRepository;
 import com.wheredidwego.security.filter.CustomAuthenticationProvider;
+import com.wheredidwego.security.handler.CustomAuthenticationEntryPoint;
 import com.wheredidwego.security.oauth2.CustomOAuth2AuthorizationRequestResolver;
 import com.wheredidwego.security.oauth2.CustomOAuth2UserService;
 import com.wheredidwego.security.oauth2.OAuth2SuccessHandler;
@@ -38,6 +39,7 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -89,7 +91,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
+                        .loginPage("/auth/login")
                         .authorizationEndpoint(authorization -> authorization
                                 .authorizationRequestResolver(new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository))
                         )
@@ -97,6 +99,9 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService)
                         )
                         .successHandler(oAuth2SuccessHandler)
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) // 여기서 우리가 만든 EntryPoint 적용
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
