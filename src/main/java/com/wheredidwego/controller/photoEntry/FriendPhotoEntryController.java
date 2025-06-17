@@ -1,7 +1,5 @@
 package com.wheredidwego.controller.photoEntry;
 
-
-import com.wheredidwego.domain.Friend;
 import com.wheredidwego.domain.PhotoEntry;
 import com.wheredidwego.domain.User;
 import com.wheredidwego.dto.photoEntry.PhotoEntryResponseDto;

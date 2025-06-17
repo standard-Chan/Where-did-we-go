@@ -45,15 +45,13 @@ public class FriendController {
         return ResponseEntity.ok(response);
     }
 
-    // 설계 참고 (양방향을 모두 제거해야하므로 frinedEntityId가 아닌 friendEmail을 통해 삭제)
-    @DeleteMapping("/{friendId}")
-    public ResponseEntity<String> deleteFriend(@PathVariable("friendId") Long friendId,
+    // 설계 참고 : 양방향을 모두 제거해야하므로 frinedEntityId를 통해 User, friend id를 얻고 해당 관계를 삭제
+    @DeleteMapping("/{friendEntityId}")
+    public ResponseEntity<String> deleteFriend(@PathVariable("friendEntityId") Long friendEntityId,
                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        User user = userService.findUserByUserDetails(userDetails);
-        User friendUser = userService.findUserById(friendId);
-
-        friendService.deleteFriend(user, friendUser);
+        Friend friendEntity = friendService.getFriendById(friendEntityId);
+        friendService.deleteFriend(friendEntity.getUser(), friendEntity.getFriend());
 
         return ResponseEntity.ok().body("삭제하였습니다.");
     }
