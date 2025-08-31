@@ -49,21 +49,6 @@ public interface PhotoEntryRepository extends JpaRepository<PhotoEntry, Long>, P
             @Param("neLng") Double neLng
     );
 
-
-//    @Query("""
-//    SELECT p
-//    FROM PhotoEntry p
-//    JOIN FETCH p.region r
-//    WHERE p.user = :user
-//      AND r.lat BETWEEN :swLat AND :neLat
-//      AND r.lng BETWEEN :swLng AND :neLng
-//    """)
-//    List<PhotoEntry> findAllInBounds(@Param("user") User user,
-//                                     @Param("swLat") Double swLat,
-//                                     @Param("neLat") Double neLat,
-//                                     @Param("swLng") Double swLng,
-//                                     @Param("neLng") Double neLng);
-
     Page<PhotoEntry> findAllByUser(User user, Pageable pageable);
 
     @Query("SELECT new com.wheredidwego.dto.photoEntry.ProvincePhotoCountResponse(r.province, count(p)) FROM PhotoEntry p JOIN p.region r "+

@@ -12,7 +12,7 @@ import java.util.List;
 public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> {
 
     @Query(
-            value = "SELECT * FROM tourist_spot FORCE INDEX (idx_lat_lng_nm_cd) " +
+            value = "SELECT * FROM tourist_spot2  FORCE INDEX (PRIMARY) " +
                     "WHERE lat BETWEEN :swLat AND :neLat " +
                     "AND lng BETWEEN :swLng AND :neLng " +
                     "AND (category_code < '60516' OR category_code > '60526')",

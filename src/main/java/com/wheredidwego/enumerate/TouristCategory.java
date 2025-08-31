@@ -61,7 +61,16 @@ public enum TouristCategory {
                 return category;
             }
         }
-        throw new IllegalArgumentException("Unknown category code: " + code);
+
+        try {
+            int numeric = Integer.parseInt(code);
+            if (numeric >= 60500 && numeric < 60600) return ETC2;
+            else if (numeric >= 60600 && numeric < 60700) return ETC3;
+        } catch (NumberFormatException e) {
+            // 문자열 코드가 숫자가 아니면 ETC1
+        }
+
+        return ETC1;
     }
 }
 

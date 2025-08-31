@@ -11,6 +11,7 @@ import com.wheredidwego.service.PhotoEntryMapper;
 import com.wheredidwego.service.PhotoEntryService;
 import com.wheredidwego.service.S3Service;
 import com.wheredidwego.service.UserService;
+import com.wheredidwego.temp.PhotoEntryWithRegionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -91,17 +92,17 @@ public class PhotoEntryController {
         return ResponseEntity.ok().body(response);
     }
 
-//    @GetMapping("/native")
-//    public ResponseEntity<List<PhotoEntryResponseDto>> getPhotoEntriesWithNativeQuery(@RequestParam(value = "swLat", defaultValue = "33")double swLat,
-//                                                                         @RequestParam(value = "swLng", defaultValue = "124")double swLng,
-//                                                                         @RequestParam(value = "neLat", defaultValue = "43")double neLat,
-//                                                                         @RequestParam(value = "neLng", defaultValue = "132")double neLng,
-//                                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
-//
-//        User user = userService.findUserByUserDetails(userDetails);
-//        List<PhotoEntryWithRegionDto> photoEntries = photoEntryService.getPhotoEntryWithRegionDto(user, swLat, swLng, neLat, neLng);
-//        List<PhotoEntryResponseDto> response = photoEntryMapper.photoEntryWithRegionMapToDtoList(photoEntries);
-//        return ResponseEntity.ok().body(response);
-//    }
+    @GetMapping("/native")
+    public ResponseEntity<List<PhotoEntryResponseDto>> getPhotoEntriesWithNativeQuery(@RequestParam(value = "swLat", defaultValue = "33")double swLat,
+                                                                         @RequestParam(value = "swLng", defaultValue = "124")double swLng,
+                                                                         @RequestParam(value = "neLat", defaultValue = "43")double neLat,
+                                                                         @RequestParam(value = "neLng", defaultValue = "132")double neLng,
+                                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        User user = userService.findUserByUserDetails(userDetails);
+        List<PhotoEntryWithRegionDto> photoEntries = photoEntryService.getPhotoEntryWithRegionDto(user, swLat, swLng, neLat, neLng);
+        List<PhotoEntryResponseDto> response = photoEntryMapper.photoEntryWithRegionMapToDtoList(photoEntries);
+        return ResponseEntity.ok().body(response);
+    }
 
 }

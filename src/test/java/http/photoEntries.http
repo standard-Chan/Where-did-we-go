@@ -1,7 +1,7 @@
 
 
 ### 전체 사진 가져오기
-GET http://localhost:8080/api/photo-entries
+GET http://localhost:8080/api/v1/photo-entries
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
